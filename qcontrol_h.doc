@@ -1,0 +1,18 @@
+!>
+!!
+!! Control data object for qprog.
+!!
+!! \Bold{Type}
+!!
+!! Control data input and checking, data structure; Data module.
+!!
+!! \Bold{Purpose}
+!!
+!! Used by codes \Tt{qprog}.
+!!
+!! \Bold{Function}
+!!
+!! Control data object for qprog.
+!!
+!!
+!<

@@ -1,0 +1,5 @@
+&bigobjparameters
+ power_split=1.,
+ bigobj_formula='userdefined',
+ number_of_integer_parameters=1
+/
