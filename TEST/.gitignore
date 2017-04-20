@@ -1,0 +1,4 @@
+*
+!.gitignore
+!bigobj.txt
+!test.ctl
