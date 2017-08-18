@@ -1,5 +1,6 @@
 *
 !.gitignore
+!.git
 !bigobj_h.f90
 !bigobj_m.f90
 !clock_m.f90
