@@ -4,15 +4,21 @@ module bigobj_h
 
 ! public types
 
-!> type storing bigobj data
-  type, public :: bigobj_t
+! Note these could be merged if the object is instantiated by its parameters  only
+!> parameters describing how to construct object
+  type, public :: bonumerics_t
      character(len=80) :: formula !< bigobj formula
      real(kr8) :: f !< power split (math variable name allowed)
      integer(ki4) :: nrpams !< number of real parameters
      integer(ki4) :: nipams !< number of integer parameters
      real(kr8), dimension(:), allocatable   :: rpar !< general real parameters
      integer(ki4), dimension(:), allocatable   :: npar !< general integer parameters
+  end type bonumerics_t
+
+! type which defines/instantiates the object
+  type, public :: bigobj_t
      real(kr8) :: pow !< power
+     type(bonumerics_t) :: n !< control  parameters
   end type bigobj_t
 
 end module bigobj_h

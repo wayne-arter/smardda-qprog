@@ -71,7 +71,7 @@ program qprog
 !! data (for bigobj, other objects to be added)
 
   call clock_start(15,'initialisation time')
-  call bigobj_init(file%bigobjdata,nin)
+  call bigobj_initfile(file%bigobjdata,nin)
   call bigobj_readcon(bigobj)
   call clock_stop(15)
 !--------------------------------------------------------------------------

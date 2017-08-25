@@ -10,7 +10,7 @@ module bigobj_m
 
 ! public subroutines
   public :: &
-  bigobj_init,  & !< open file
+  bigobj_initfile,  & !< open file
   bigobj_readcon,  & !< read data from file
   bigobj_solve,  & !< generic subroutine
   bigobj_userdefined,  & !< user-defined function
@@ -40,13 +40,13 @@ module bigobj_m
   contains
 !---------------------------------------------------------------------
 !> open file
-subroutine bigobj_init(file,channel)
+subroutine bigobj_initfile(file,channel)
 
   !! arguments
   character(*), intent(in) :: file !< file name
   integer(ki4), intent(out),optional :: channel   !< input channel for object data structure
   !! local
-  character(*), parameter :: s_name='bigobj_init' !< subroutine name
+  character(*), parameter :: s_name='bigobj_initfile' !< subroutine name
   logical :: unitused !< flag to test unit is available
 
   !! get file unit
@@ -70,7 +70,7 @@ subroutine bigobj_init(file,channel)
      stop
   end if
 
-end subroutine bigobj_init
+end subroutine bigobj_initfile
 !---------------------------------------------------------------------
 !> read data from file
 subroutine bigobj_readcon(self,channel)
@@ -148,27 +148,27 @@ subroutine bigobj_readcon(self,channel)
   end select formula_chosen
 
   !! store values
-  self%formula=bigobj_formula
+  self%n%formula=bigobj_formula
 
-  self%f=power_split
+  self%n%f=power_split
 
   !! allocate arrays and assign
 
-  self%nrpams=number_of_real_parameters
-  self%nipams=number_of_integer_parameters
+  self%n%nrpams=number_of_real_parameters
+  self%n%nipams=number_of_integer_parameters
 
   formula_allocate: select case (bigobj_formula)
 
   case('userdefined')
      if (number_of_real_parameters>0) then
-        allocate(self%rpar(number_of_real_parameters), stat=status)
+        allocate(self%n%rpar(number_of_real_parameters), stat=status)
         call log_alloc_check(m_name,s_name,65,status)
-        self%rpar=general_real_parameters(:number_of_real_parameters)
+        self%n%rpar=general_real_parameters(:number_of_real_parameters)
      end if
      if (number_of_integer_parameters>0) then
-        allocate(self%npar(number_of_integer_parameters), stat=status)
+        allocate(self%n%npar(number_of_integer_parameters), stat=status)
         call log_alloc_check(m_name,s_name,66,status)
-        self%npar=general_integer_parameters(:number_of_integer_parameters)
+        self%n%npar=general_integer_parameters(:number_of_integer_parameters)
      end if
   case default
   end select formula_allocate
@@ -235,7 +235,7 @@ function bigobj_fn(self,psi)
   real(kr8) :: pow !< local variable
 
   !! select bigobj
-  formula_chosen: select case (self%formula)
+  formula_chosen: select case (self%n%formula)
   case('userdefined')
      pow=bigobj_userdefined(self,psi)
   end select formula_chosen
@@ -302,30 +302,30 @@ subroutine bigobj_write(self,channel)
 
   write(iout,*,iostat=status) 'bigobj_formula'
   call log_write_check(m_name,s_name,18,status)
-  write(iout,*,iostat=status) self%formula
+  write(iout,*,iostat=status) self%n%formula
   call log_write_check(m_name,s_name,19,status)
   write(iout,*,iostat=status) 'f'
   call log_write_check(m_name,s_name,20,status)
-  write(iout,*,iostat=status) self%f
+  write(iout,*,iostat=status) self%n%f
   call log_write_check(m_name,s_name,21,status)
   write(iout,*,iostat=status) 'nrpams'
   call log_write_check(m_name,s_name,46,status)
-  write(iout,*,iostat=status) self%nrpams
+  write(iout,*,iostat=status) self%n%nrpams
   call log_write_check(m_name,s_name,47,status)
-  if (self%nrpams>0) then
+  if (self%n%nrpams>0) then
      write(iout,*,iostat=status) 'real_parameters'
      call log_write_check(m_name,s_name,48,status)
-     write(iout,*,iostat=status) self%rpar
+     write(iout,*,iostat=status) self%n%rpar
      call log_write_check(m_name,s_name,49,status)
   end if
   write(iout,*,iostat=status) 'nipams'
   call log_write_check(m_name,s_name,50,status)
-  write(iout,*,iostat=status) self%nipams
+  write(iout,*,iostat=status) self%n%nipams
   call log_write_check(m_name,s_name,51,status)
-  if (self%nipams>0) then
+  if (self%n%nipams>0) then
      write(iout,*,iostat=status) 'integer_parameters'
      call log_write_check(m_name,s_name,52,status)
-     write(iout,*,iostat=status) self%npar
+     write(iout,*,iostat=status) self%n%npar
      call log_write_check(m_name,s_name,53,status)
   end if
 
@@ -402,10 +402,10 @@ subroutine bigobj_delete(self)
   !! local
   character(*), parameter :: s_name='bigobj_delete' !< subroutine name
 
-  formula_deallocate: select case (self%formula)
+  formula_deallocate: select case (self%n%formula)
   case('userdefined')
-     if (self%nrpams>0) deallocate(self%rpar)
-     if (self%nipams>0) deallocate(self%npar)
+     if (self%n%nrpams>0) deallocate(self%n%rpar)
+     if (self%n%nipams>0) deallocate(self%n%npar)
   case default
   end select formula_deallocate
 
