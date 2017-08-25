@@ -113,8 +113,11 @@ subroutine bigobj_readcon(self,channel)
   !!read bigobj parameters
   read(ninbo,nml=bigobjparameters,iostat=status)
   if(status/=0) then
-     call log_error(m_name,s_name,1,error_fatal,'Error reading bigobj parameters')
+     !!dump namelist contents to logfile to assist error location
      print '("Fatal error reading bigobj parameters")'
+     call log_getunit(ilog)
+     write(ilog,nml=bigobjparameters)
+     call log_error(m_name,s_name,1,error_fatal,'Error reading bigobj parameters')
   end if
 
   call lowor(bigobj_formula,1,len_trim(bigobj_formula))
