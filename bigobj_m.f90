@@ -36,6 +36,7 @@ module bigobj_m
   integer(ki4) :: k !< loop counter
   integer(ki4) :: l !< loop counter
   integer(ki4) :: ij !< loop counter
+  integer(ki4)  :: ilog      !< for namelist dump after error
 
   contains
 !---------------------------------------------------------------------

@@ -15,6 +15,7 @@ module log_m
   log_open_check,  & !< check file opening
   log_read_check,  & !< check result of read
   log_write_check,  & !< check result of write
+  log_getunit,  & !< get unit number for logging (namelists)
   log_close     !< close log
 
   interface log_value
@@ -47,15 +48,16 @@ module log_m
   integer(ki4),parameter :: maxseriouserrors=10 !< max no of serious errors
 
   contains
-!----------------------------------------------------------------------
+!---------------------------------------------------------------------
 !> create log file and initialise
 subroutine log_init(fileroot,timestamp)
 
   !! arguments
-  character(*), intent(in) :: fileroot !<root of log file name
+  character(*), intent(inout) :: fileroot !<root of log file name
   type(date_time_t), intent(in) :: timestamp !< timestamp
   !! local
   logical :: unitused !< flag to test unit is available
+  integer(ki4) :: ilen  !< length of string
 
   !! initialise counters
   errorno=0
@@ -63,7 +65,14 @@ subroutine log_init(fileroot,timestamp)
 
   !! create filename
   timedate=timestamp
-  logfile=trim(fileroot)//'.log'
+  ! strip ctl from end of name
+  ilen=len_trim(fileroot)
+  if (ilen>4) then
+    if (fileroot(ilen-3:ilen)=='.ctl') ilen=ilen-4
+  end if
+  logfile=fileroot(1:ilen)//'.log'
+  ! and reset file root
+  fileroot=logfile(1:ilen)
 
   !! get file unit
   do i=99,1,-1
@@ -112,16 +121,16 @@ subroutine log_error(modname,subname,point,severity,errormessage)
      seriouserrors=seriouserrors+1
      write(nlog,'(a)') 'FATAL ERROR - run terminated'
      call log_close
-     stop
+     stop 1
 
      !!serious error
   else if(severity==error_serious) then
      seriouserrors=seriouserrors+1
      if(seriouserrors>=maxseriouserrors)then
         !!close down
-        write(nlog,'(a)') 'TOO MANY SERIOUS ERROR - run terminated'
+        write(nlog,'(a)') 'TOO MANY SERIOUS ERRORS - run terminated'
         call log_close
-        stop
+        stop 1
 
      end if
 
@@ -202,6 +211,16 @@ subroutine log_write_check(modname,subname,point,status)
 
 
 end subroutine log_write_check
+!---------------------------------------------------------------------
+!> get unit number for logging (namelists)
+subroutine log_getunit(kunit)
+
+  !! arguments
+  integer(ki4), intent(out) :: kunit    !< log unit number
+
+  kunit=nlog
+
+end subroutine log_getunit
 !---------------------------------------------------------------------
 !> close log file
 subroutine log_close
