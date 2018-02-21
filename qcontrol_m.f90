@@ -3,6 +3,8 @@ module qcontrol_m
   use const_kind_m
   use log_m
   use qcontrol_h
+  use bigobj_h
+  use bigobj_m
 
   implicit none
   private
@@ -72,11 +74,12 @@ subroutine qcontrol_close
 end  subroutine qcontrol_close
 !---------------------------------------------------------------------
 !> read data for this run
-subroutine qcontrol_read(file,param,plot)
+subroutine qcontrol_read(file,param,bonumerics,plot)
 
   !! arguments
   type(qfiles_t), intent(out) :: file !< file names
   type(qparams_t), intent(out) :: param !< control parameters
+  type(bonumerics_t), intent(out) :: bonumerics !< controls for bigobj
   type(qplots_t), intent(out) :: plot !< plot selectors
 
   !!local
@@ -150,7 +153,7 @@ subroutine qcontrol_read(file,param,plot)
   !! set default misc parameters
   prog_control = 'standard'
   prog_realpar = .0001_kr8
-  prog_intpar = 0
+  prog_intpar = 1
   prog_logicpar = .false.
 
   !!read misc parameters

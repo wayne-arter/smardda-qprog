@@ -1,0 +1,10 @@
+&progfiles
+/
+&miscparameters
+/
+&plotselections
+/
+&qprogparameters
+/
+&bigobjparameters
+/

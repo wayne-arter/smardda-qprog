@@ -50,6 +50,11 @@ subroutine bigobj_initfile(file,channel)
   character(*), parameter :: s_name='bigobj_initfile' !< subroutine name
   logical :: unitused !< flag to test unit is available
 
+  if (trim(file)=='null') then
+     call log_error(m_name,s_name,1,log_info,'null filename ignored')
+     return
+  end if
+
   !! get file unit
   do i=99,1,-1
      inquire(i,opened=unitused)
@@ -67,17 +72,17 @@ subroutine bigobj_initfile(file,channel)
   if(status/=0)then
      !! error opening file
      print '("Fatal error: Unable to open control file, ",a)',controlfile
-     call log_error(m_name,s_name,1,error_fatal,'Cannot open control data file')
+     call log_error(m_name,s_name,2,error_fatal,'Cannot open control data file')
      stop
   end if
 
 end subroutine bigobj_initfile
 !---------------------------------------------------------------------
 !> read data from file
-subroutine bigobj_readcon(self,channel)
+subroutine bigobj_readcon(selfn,channel)
 
   !! arguments
-  type(bigobj_t), intent(out) :: self !< type which data will be assigned to
+  type(bonumerics_t), intent(out) :: selfn !< type which data will be assigned to
   integer(ki4), intent(in),optional :: channel   !< input channel for object data structure
 
   !! local
@@ -152,27 +157,27 @@ subroutine bigobj_readcon(self,channel)
   end select formula_chosen
 
   !! store values
-  self%n%formula=bigobj_formula
+  selfn%formula=bigobj_formula
 
-  self%n%f=power_split
+  selfn%f=power_split
 
   !! allocate arrays and assign
 
-  self%n%nrpams=number_of_real_parameters
-  self%n%nipams=number_of_integer_parameters
+  selfn%nrpams=number_of_real_parameters
+  selfn%nipams=number_of_integer_parameters
 
   formula_allocate: select case (bigobj_formula)
 
   case('userdefined')
      if (number_of_real_parameters>0) then
-        allocate(self%n%rpar(number_of_real_parameters), stat=status)
+        allocate(selfn%rpar(number_of_real_parameters), stat=status)
         call log_alloc_check(m_name,s_name,65,status)
-        self%n%rpar=general_real_parameters(:number_of_real_parameters)
+        selfn%rpar=general_real_parameters(:number_of_real_parameters)
      end if
      if (number_of_integer_parameters>0) then
-        allocate(self%n%npar(number_of_integer_parameters), stat=status)
+        allocate(selfn%npar(number_of_integer_parameters), stat=status)
         call log_alloc_check(m_name,s_name,66,status)
-        self%n%npar=general_integer_parameters(:number_of_integer_parameters)
+        selfn%npar=general_integer_parameters(:number_of_integer_parameters)
      end if
   case default
   end select formula_allocate
@@ -238,6 +243,7 @@ function bigobj_fn(self,psi)
   character(*), parameter :: s_name='bigobj_fn' !< subroutine name
   real(kr8) :: pow !< local variable
 
+  pow=0._kr8
   !! select bigobj
   formula_chosen: select case (self%n%formula)
   case('userdefined')

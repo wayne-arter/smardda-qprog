@@ -1,4 +1,4 @@
-program qprog
+program p_qprog
 
   use const_kind_m
   use const_numphys_h
@@ -63,16 +63,16 @@ program qprog
 !--------------------------------------------------------------------------
 !! read control file
 
-  call clock_start(2,'qcontrol initialisation time')
+  call clock_start(2,'control initialisation time')
   call qcontrol_init(fileroot)
-  call qcontrol_read(file,param,plot)
+  call qcontrol_read(file,param,bigobj%n,plot)
   call clock_stop(2)
 !--------------------------------------------------------------------------
-!! data (for bigobj, other objects to be added)
+!! other data for bigobj and/or read bigobj controls directly
 
   call clock_start(15,'initialisation time')
   call bigobj_initfile(file%bigobjdata,nin)
-  call bigobj_readcon(bigobj)
+  !call bigobj_readcon(bigobj%n)
   call clock_stop(15)
 !--------------------------------------------------------------------------
 !! do the main work
@@ -146,4 +146,4 @@ program qprog
   call clock_delete
 !--------------------------------------------------------------------------
 
-end program qprog
+end program p_qprog
