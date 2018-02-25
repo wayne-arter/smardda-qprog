@@ -140,16 +140,17 @@ sed \
 -e "s/bigobj/$BIGOBJ/g" \
 < $SMPROG/qprog.ctl > $QPROG.ctl
 #
-ln -sf $SM/f95/const_kind_m.f90
-ln -sf $SM/f95/const_numphys_h.f90
-ln -sf $SM/f95/date_time_m.f90
-ln -sf $SM/f95/log_m.f90
-ln -sf $SM/f95/clock_m.f90
-ln -sf $SM/f95/gfile_m.f90
-ln -sf $SM/f95/vfile_m.f90
-ln -sf $SM/fortd LIB
-(cd ..;ln -sf $SM/config)
+ln -sf $SMITER_DIR/f95/const_kind_m.f90
+ln -sf $SMITER_DIR/f95/const_numphys_h.f90
+ln -sf $SMITER_DIR/f95/date_time_m.f90
+ln -sf $SMITER_DIR/f95/log_m.f90
+ln -sf $SMITER_DIR/f95/clock_m.f90
+ln -sf $SMITER_DIR/f95/gfile_m.f90
+ln -sf $SMITER_DIR/f95/vfile_m.f90
+ln -sf $SMITER_DIR/fortd LIB
+(cd ..;ln -sf $SMITER_DIR/config)
 #lastly produce Makefile and run program
 $SMDEV/makemake $QPROG
 mv Makefile.1 Makefile.$QPROG
+make -f Makefile.$QPROG
 ./$QPROG $QPROG
