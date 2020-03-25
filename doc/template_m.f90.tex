@@ -1,0 +1,82 @@
+\small
+\begin{verbatim}
+module template_m
+
+  use another_m, only: another_var1 !<  Use only another_var1 from this module
+  use second_m,  second_var1 => v   !<  Use all module with second_var renamed v
+  use precision_m, only krb         !<  Use base real precision
+
+  implicit none
+  private
+
+! public subroutines
+
+  public template_usersub
+
+! public types
+
+!> Example type 1
+  type,public :: template_xyz_t
+     integer :: num = 0                !< Number of things
+     integer,pointer :: ptr => null() !< Pointer to first thing
+  end type template_xyz_t
+
+! public variables
+
+!> The description of the first public variable in the module.
+!! Public variables will usually require at least a full line of
+!! description.
+!!
+  integer,dimension(1:3),public :: template_eg1 !< local variable
+!> second public variable
+  integer,dimension(:),allocatable,public :: template_eg2 !< local variable
+
+! private variables
+
+  integer,dimension(1:3) :: eg1 !< example variable 1
+!> Example variable 2 has a longer description
+!! which is too long to fit at the end of the line.
+  integer,dimension(1:3) :: eg2 = 0 !< local variable
+  integer,dimension(1:3) :: eg3 = 0            !< example variable 3
+  integer,dimension(:),allocatable :: eg4     !< example variable 4
+  integer,target                    :: eg5 = 0 !< example variable 5
+
+
+  contains
+!--------------------------------------------------------------------------
+!> First user subroutine with at least a line of description
+!! saying what it does.
+!!
+subroutine template_usersub(arg1)
+  ! arguments
+  real(krb), intent(in) :: arg1 !< argument 1
+  ! local variables
+  integer :: i !< local variable description
+  integer :: j !< local variable description
+  integer :: k !< local variable description
+
+  ! user code
+  call module_xyz()
+
+end subroutine template_usersub
+!--------------------------------------------------------------------------
+!> Second user subroutine with at least a line of description
+!! saying what it does.
+!!
+subroutine template_usersub2(arg2)
+  ! arguments
+  integer(krb), intent(out) :: arg2 !< argument 1
+  ! local variables
+  integer :: i !< local variable description
+  integer :: j !< local variable description
+  integer :: k !< local variable description
+
+  ! user code
+  arg2=10
+
+end subroutine template_usersub
+!--------------------------------------------------------------------------
+
+end module template_m
+\end{verbatim}
+\normalsize

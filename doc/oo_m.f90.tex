@@ -1,0 +1,66 @@
+\small
+\begin{verbatim}
+module oo_m
+
+! use statements
+
+! default to explicit typing and private
+  implicit none
+  private
+
+! public subroutines
+
+  public oo_init
+  public oo_delete
+  public oo_method1
+
+! public types
+
+!> Type to contain non-static components of objects.
+!! All components should have default initial values if possible.
+  type, public :: oo_t
+     integer :: comp1 = 0  !< component 1
+     integer :: comp2 = 0  !< component 2
+  end type oo_t
+
+! public variables
+
+! private types
+
+! private variables
+
+  contains
+!--------------------------------------------------------------------------
+!> Constructor for object.
+subroutine oo_init(self)
+
+  ! arguments
+  !> Variable to contain nonstatic data for self object must be first argument and be called \Tt{self}
+  type(oo_t), intent(out) :: self !< local variable
+end subroutine oo_init
+!--------------------------------------------------------------------------
+!> First method for module.
+subroutine oo_method1(self,other_oo)
+
+  ! arguments
+  type(oo_t), intent(inout) :: self !< Data for self object must be first argument and be called \Tt{self}
+  type(oo_t), intent(in) :: other_oo !< Other object of same type as self
+
+end subroutine oo_method1
+!--------------------------------------------------------------------------
+!> Destructor for object.
+!!
+!! The destructor deallocates all storage which the object is
+!! responsible for. It is good programming style to make sure that the
+!! object cannot be used after it has been deleted by invalidating
+!! all the data i.e. nullifying pointers and setting non-pointer
+!! variables to values which will generate an error if used.
+subroutine oo_delete(self)
+  ! arguments
+  type(oo_t), intent(inout) :: self !< data for self object
+end subroutine oo_delete
+!--------------------------------------------------------------------------
+
+end module oo_m
+\end{verbatim}
+\normalsize

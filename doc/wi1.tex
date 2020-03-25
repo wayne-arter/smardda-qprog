@@ -1,0 +1,1313 @@
+\documentclass[11pt,twoside,a4paper]{report}
+%\setlength{\textwidth}{155.0mm}
+
+%%======================================================================
+%% PACKAGES:
+%%
+\usepackage{times}               % Times+Helvetica+Courier fonts
+%\usepackage{helvet}              % helvetica + cmr
+%\usepackage{frutiger}            % Frutiger \sffamily fonts.
+\usepackage{fancyhdr}       % package for headers/footers
+%\usepackage{culhamart}           % headings in \sffamily\bfseries
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}            % Graphics.
+%\usepackage{subfigure}           % Subfigures
+\usepackage{a4}                  % page layout to fit A4
+%\usepackage{amssymb}              % 
+%\usepackage{lastpage}            % get page no of last page
+%\usepackage{ifthen}              % logical branching
+\usepackage{hyperref}            %insert hyper-links
+\usepackage{latexsym}
+% uncomment the following to override auto page total
+%\pptotal{20}
+%%======================================================================
+
+
+%\newcommand{\culhamshorttitle}{CCFE-QPROG-WI1-Draft}%<==edit
+\newcommand{\culhamshorttitle}{CCFE-R(15) 34}%<==edit
+\newcommand{\Sec}[1]{Section~\ref{sec:#1}}
+\newcommand{\Fig}[1]{Figure~\ref{fig:#1}}
+\newcommand{\Eq}[1]{Equation~(\ref{eq:#1})}
+\newcommand{\Eqs}[2]{Equations(\ref{eq:#1}) and~(\ref{eq:#2})}
+\newcommand{\Figs}[2]{Figures~\ref{fig:#1}--~\ref{fig:#2}}
+%Bold for vectors, tt for computer names
+\newcommand{\V}[1]{\mathbf{#1}}
+\newcommand{\T}[1]{{\tt #1}}
+\newcommand{\F}[1]{\mathcal{#1}}
+\def\zetab{\mbox{\bf $\zeta$}}
+\def\coden{QPROG} %<==edit
+
+
+%%======================================================================
+%% REPORT TITLE PAGE Information
+
+\title {\culhamshorttitle \\ \vspace*{0.5cm}
+CCFE\thanks{
+UK Atomic Energy Authority,
+Culham Science Centre, Abingdon, Oxfordshire OX14 3DB
+}
+\\ \vspace*{0.5cm}
+Fortran 95 Programming Style
+}%<==edit
+
+
+
+
+
+\newcommand{\culhamcontacttel}{Telephone: +44 1235 466433}%<==edit
+\newcommand{\culhamcontactfax}{E-mail: wayne.arter@ccfe.ac.uk}%<==edit
+\newcommand{\culhamcontactname}{Wayne Arter}%<==edit
+
+%%qa box information -- change following as needed
+\date{\today\\ \vspace*{5.0cm}
+\copyright UKAEA 2015\\ \vspace*{1.0cm}
+}
+\author{\culhamcontactname \thanks{\culhamcontacttel \ \culhamcontactfax},
+Nick Brealey\thanks{Cobham Technical Services, Network House, Langford Locks, Kidlington, OX5 1LH},
+James Eastwood and Guy Morgan\thanks{Culham Electromagnetics Ltd, Culham Science Centre, Abingdon, OX14 3DB}}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\cleardoublepage
+
+\setlength{\parindent}{0pt}
+\addtolength{\parskip}{0.5\baselineskip}
+\setlength{\topsep}{0pt}
+\setlength{\itemsep}{0pt}
+
+
+%\pacs{52.35.-g, 47.55.P-, 02.30.Oz}
+
+%\maketitle
+
+%
+%%%--------------------------------------------------------------------
+%%  Abstract
+%%
+\begin{abstract}
+%This report describes work under the \coden\ Project.
+\noindent This document summarises the Fortran 95 programming style to be used
+for object-oriented Fortran codes.
+%for the \coden\ project.
+\end{abstract}
+%
+%%====================================================================
+%% BODY OF THE REPORT
+%%---------------------------------------------------------------------
+
+%---------------------------------------------------------------------
+%                      The body of the report
+%
+\chapter{Introduction}\label{sec:intro}
+
+The consistent use of a set of programming conventions
+can make software easier to understand, develop  and maintain.
+This leads to increased reliability of the software.
+
+This work instruction (based on the unpublished report~\cite{Ea09Fort})
+describes the programming conventions
+for the use of Fortran~95 in the \coden\ project.
+The programming conventions used have an impact on the following
+aspects of the software which should be considered when making choices:
+\begin{enumerate}
+\setlength{\parsep}{0ex}
+\setlength{\itemsep}{0ex}
+\item clarity,
+\item modularity,
+\item defensive programming,
+\item flexibility,
+\item portability,
+\item performance,
+\item robustness and
+\item traceability.
+\end{enumerate}
+
+By clarity we mean how easy the code is to read and understand.
+Code layout, naming conventions and comments are low-level factors
+which are particularly important here but the architecture of the
+software and external documentation are also important.
+
+Modularity is related to clarity. It means breaking the code up
+into manageable pieces so that a developer can work on one piece of the
+code without having a complete understanding of every other part of
+the code.
+
+By defensive programming we mean how robust the code is with respect
+to programming errors as distinct from how the code handles errors due
+to incorrect user input or system errors, which we regard as being
+related to robustness.  We consider the code to be programmed
+defensively if programming errors will stop the code
+compiling. Factors which contribute to a defensive programming style
+include using explicit interfaces to subroutines and assumed shape
+arrays so that mismatched argument lists are detected, using keywords
+in subroutine calls, using \verb|implicit none| and \verb|private| so
+that mistyped variable names are more likely to be detected, using
+derived types etc.
+
+By flexibility we mean how easy it is to change the code. Leaving our
+options open is part of this. Flexibility can be improved by using
+derived types where we can change the implementation later, 
+using \verb|private| so that we know that changing one part of the
+code won't have an unexpected effect on another part of the code.
+
+Portability means that the software should not be tied to particular
+computers or compilers. For \coden, we aim to achieve portability by
+writing software which conforms to the Fortran 95
+standard~\cite{ISO1539}. There are however minor portability and
+standards-compliance issues with obtaining command line arguments.
+(Features from Fortran 2003 address these issues.)
+
+Performance is concerned with how fast the code runs, how large a
+problem can be run on a particular system and how accurate the results
+are. The choice of algorithm and input parameters are the primary
+factors here but choices such as using pointers or indices, or using derived
+types or multiple arrays, may have an effect on performance.
+
+Robustness is concerned with how the code behaves in response to user
+errors or system errors such as not being able to allocate more memory
+or running out of space on a disk. Checking the status of
+\verb|allocate|, \verb|read| and \verb|write| statements and avoiding
+large automatic arrays are relevant here.
+
+Traceability is concerned with knowing which versions of the source 
+files were used to build the software, which compiler was used,
+what compiler options were used, whether the validation test deck been
+run with a particular executable etc.
+
+\chapter{Style Recommendations}
+\label{sec:style}
+
+This section describes recommendations for programming style.
+Section~\ref{sec:arch} describes recommendations which are more
+related to architecture, although the distinction may be subjective.
+
+\section{Free source format}
+Use the free source form which was introduced in Fortran 90.
+
+\section{One module per file}
+Only put one module in each file. We expect the program to consist
+entirely of Fortran modules and one program unit. Interface modules
+shall be used to provide interfaces to heritage Fortran 77 program units.
+
+\section{File names}
+
+The file name should be the same as the name of the module or 
+program unit, in lower case, with the extension \verb|.f90|.
+
+If it is necessary to have different versions of a file add a suffix
+to the root part of the name e.g.\ if
+we have a standard \verb|types| module in file \verb|types.f90| and
+we want an alternative version which uses 32 bit numbers instead
+of 64 bit  numbers we could put the alternative version in the
+file \verb|types.r4.f90|.
+
+{\it The \verb|.f90| means the free source format which was
+  introduced in Fortran 90. Some people have suggested that we
+   use  \verb|.f95| to indicate that the source is Fortran 95. The
+   problem with this is that there are Fortran 
+   95 compilers which do not accept the  \verb|.f95| extension.
+   We use lower case for file names because they are easier 
+   to read than uppercase.}
+
+
+\section{Lower-case tokens}
+
+Use lower case for all Fortran tokens (keywords, names, constants,
+operators, edit descriptors etc) except for character literal constants.
+(Comments should be in mixed case.)
+   
+
+
+\section{Naming conventions}
+
+
+We advocate using the module name as the prefix for public variables,
+public derived types and public routines in a module e.g.\ public
+variables and routines in module \verb|group| should have names like
+\verb|group_number| or \verb|group_first()|. 
+
+
+
+It should be remembered that dummy argument names can be used as keyword 
+names in Fortran 95 routines with explicit interfaces. Dummy argument names 
+should be simple names which make sense when used as keyword arguments
+e.g.\
+\begin{verbatim}
+   n_tree = tree_size( root_node=node(1) )
+\end{verbatim}
+
+
+Local variables and types should not have the module prefix. They should have
+names like \verb|j| or \verb|max_iterations| (assuming that there is 
+no \verb|max| module).
+
+The names for private module variables and routines should be chosen
+by the programmer to aid readability. They should not use the module
+name as a prefix, so that they are distinguished from their public
+counterparts.
+
+Derived types should have the suffix \verb|_t| e.g.\ 
+\verb|tree_node_t|. This allows the use of dummy argument names
+without the \verb|_t| which is convenient for keyword arguments e.g.\ 
+\verb|call tree_clear(tree_node=x)|.
+
+\section{Object-oriented design pattern}
+\label{sec:oo}
+
+\coden\ will use an object-oriented design pattern to allow
+multiple instances of various classes of object.
+
+In this design pattern the data which represent an instance of an
+object are stored in a variable of a derived type which is created
+outside the module. The `member functions' which operate on the
+object are module routines which take the data derived type 
+as an argument. The derived type is defined in the module.
+
+For this design pattern we need conventions for the module name,
+the type which contains the data for an object, the constructor
+for the object, the destructor for the object and the dummy argument
+name and position for the variable containing the object's data.
+
+The naming convention for \coden\ is 
+\begin{enumerate}
+\item The name with a \verb|_m| suffix is the name of the
+  module (and the base name of the file containing the module).
+\item The name with the suffix \verb|_t| is the derived type
+  containing the data for the instance of an object.
+\item \verb|self| is the name of the dummy argument of the
+  module data type. The \verb|self| argument should be the
+  first argument.
+\item The constructor for an object should
+  be a subroutine with the module name with the suffix \verb|_init|.
+\item The destructor for an object should be a subroutine with the
+  module name with the suffix \verb|_delete|.
+\item When a procedure needs to have an object of
+  type \verb|xxx_t| passed to it a dummy argument name of \verb|xxx|
+  should be used if the \verb|self| dummy argument name is
+  inappropriate.
+\end{enumerate}
+Appendix~\ref{sec:appa} contains a template object-oriented design
+pattern \texttt{oo\_m.f90} for use in \coden.
+
+\section{Avoid using double or trailing underscores}
+
+Don't use names like \verb|my__variable| or \verb|my_variable_|.
+Double underscores are hard to distinguish from single underscores
+in some fonts.
+
+\section{Use implicit none and private}
+
+Every module should have \verb|implicit none| and \verb|private|
+statements. Program units should have \verb|implicit none|.
+The \verb|private| attribute can be used in user-defined types
+to hide the components of a type.
+
+\section{One statement per line}
+
+Generally, do not put more than one statement per line (don't use the \verb|;|
+statement separator). However, this practice may be helpful if the statements are
+simple equalities and involve closely related variables, e.g.\ assignments to different components
+of a vector or derived type.
+
+% {\it
+% Using more than one statement per line:
+% \begin{enumerate}
+% \item makes the code harder to read,
+% \item makes it harder to set break points in debuggers,
+% \item makes it harder to analyse the output of profiling
+%    and coverage tools,
+% \item makes it harder to associate compiler error messages with
+%    statements and
+% \item confuses some utilities (a2ps pretty printer).
+% \end{enumerate}
+% }
+
+\section{Indenting}
+
+The source code should use indenting.
+The indenting style is as follows. Statements that logically subdivide
+the source (such as \T{module}, \T{subroutine}, \T{end function}) begin in column~$1$.
+All other statements are indented at least~$2$ characters, except statements
+with numeric labels.
+
+The extra indentation used in blocks such as \T{if}, \T{do}, should be
+$2$ more characters per level of indentation.
+%\begin{tabular}[h]{ll}
+%do blocks: &  3 characters\\
+%if/select case/where/forall blocks: & 3 characters \\
+%type/interface blocks: &  3 characters \\
+%program/module/subroutine/function blocks: & 2 characters
+%\end{tabular}\\[2ex]
+There should be no extra indentation applied to continuation lines, which
+should be denoted by a trailing ampersand \verb|&|. Optionally \verb|&|
+may appear in column~$2$.
+Comments should be indented so that the initial \verb|!| lines up with
+what they are commenting on.
+%
+%The extra indentation used in different kinds of blocks should be:\\[2ex]
+%\begin{tabular}[h]{ll}
+%do blocks: &  3 characters\\
+%if/select case/where/forall blocks: & 3 characters \\
+%type/interface blocks: &  3 characters \\
+%program/module/subroutine/function blocks: & 2 characters
+%\end{tabular}\\[2ex]
+%The extra indentation applied to continuation lines should be 5
+%characters. (The Xemacs default.)\\
+%Comments should be indented so that the initial \verb|!| lines up with
+%what they are commenting on.
+
+
+\section{Continuation lines}
+
+Use an ampersand, \verb|&|, at the end of the line to be continued
+and in column~$2$ of the continuation line if desired.
+%and at the start of the continuation line. The second and subsequent
+%\verb|&| should be indented an extra 5 characters.
+
+\section{Labelling}
+
+\begin{itemize}
+\item Numeric labels should not be used except in the case of the
+  number 9999 or 999 and then only for an error/emergency exit case.
+\item The \verb|goto| statement can be used to break out of a loop but 
+  \verb|exit| and \verb|cycle| are preferred where possible.
+\item Longer \verb|do| loops should be labelled with a meaningful text 
+  identifier to aid the understanding of programmers who are not
+  familiar with the code.
+\item \verb|do| loops with \verb|exit| statements are preferred to the 
+  \verb|do while| construct which is constrained to test the logical
+  clause at the beginning of the loop whereas an \verb|exit| statement 
+  can occur at any point in a loop.
+\end{itemize}
+
+\section{Format statements}
+In order of preference:
+\begin{enumerate}
+\item From a character variable,
+\item embedded in the \verb|write| statement, e.g.\
+\verb|write(luout,'(i2,a)')...|,
+\item Numbered \verb|format| statements.
+\end{enumerate}
+
+\section{Keywords and spaces}
+
+The preferred style is to use spaces in \verb|else if|, \verb|end do|,
+\verb|end subroutine| etc. 
+
+\verb|goto| is preferred to \verb|go to|.
+
+\section{Declarations}
+
+All parts of the declaration of a variable should be in a single
+statement rather than having multiple statements with the declaration 
+scattered:
+\begin{verbatim}
+  real(kr2), dimension(:,:), target, allocatable, save, public :: x
+\end{verbatim}
+is preferred over:
+\begin{verbatim}
+  real(kr2) x
+  ... 
+  dimension x(:,:)
+  ...
+  allocatable x
+  ...
+  target    x
+  ...
+  public    x
+  ...
+  save      x
+\end{verbatim}
+
+
+N.B.\ the form above is preferred over:
+\begin{verbatim}
+  real(kr2), target, allocatable, save, public :: x(:,:)
+\end{verbatim}
+because it allows the variable to be initialised in the declaration:
+\begin{verbatim}
+  real(kr2), public, dimension(3) :: x0 = 0.0_kr2
+\end{verbatim}
+
+Similarly, the attributes \verb|intent(...)|, \verb|optional|,
+\verb|parameter|, \verb|pointer| and \verb|private| should be used in
+type declaration statements in preference to the corresponding
+separate declarations.
+
+The new form of character declaration should be used:
+\begin{verbatim}
+  character(4), parameter :: extension = '.dat'
+\end{verbatim}
+or
+\begin{verbatim}
+  character(len=4), parameter :: extension = '.dat'
+\end{verbatim}
+
+This is more regular than the older way of specifying the length
+(which can only be used with characters with default kind):
+\begin{verbatim}
+  character*4, parameter :: extension = '.dat'
+\end{verbatim}
+
+\section{Comments and documentation}
+
+In \coden, documentation is part of the code. We
+propose a particular commenting style which can be processed by
+doxygen~\cite{He07doxy} to produce html and/or pdflatex documentation automatically.
+doxygen operation is by default controlled by a file named ``doxyfile",
+supplied with the source. Note that doxygen~1.8.5  or later is needed
+for best results.
+
+The following features of \T{doxyfile} are noted, viz.
+the setting of the tag\\
+%\begin{verbatim}
+\verb|PROJECT_NAME = | \coden\  \\
+%\end{verbatim}
+The html aliases
+\begin{verbatim}
+ALIASES = Bold{1}="<b>\1</b>"
+ALIASES += Emph{1}="<em>\1</em>"
+ALIASES += Tt{1}="<tt>\1</tt>"
+\end{verbatim}
+%and the words removed to produce abbreviations
+%\begin{verbatim}
+%ABBREVIATE_BRIEF       = "The $name class" \
+%                         "The $name widget" \
+%                         "The $name file" \
+%                         is \ 
+%                         provides \
+%                         specifies \
+%                         contains \
+%                         represents \
+%                         a \  
+%                         an \ 
+%                         the  
+%\end{verbatim}
+
+doxygen uses \verb|!>| to indicate that the comment refers to the following
+Fortran source, \verb|!<| to the preceding Fortran source and \verb|!!| (double
+exclamation marks) to extend a comment over a line.  The comments
+applying to a module, subroutine, function or variable should be
+placed immediately before the item they are describing, ie.\ use \verb|!>|.
+Comments can also be placed at the end of a line (using \verb|<!|) but
+because of space limitations
+this is usually only suitable for declarations of variables which
+don't require much description.  With the \T{ALIASES} tag set as above
+text enclosed by braces following \verb|\Emph|, \verb|\Bold|  and \verb|\Tt|  is set
+respectively to the emphasised, strong and monotype fonts.
+Indented text starting with `-' is set as itemised lists in the
+output from doxygen.  Alternatively, html markup can be included
+in the comments in the code, but this makes it less readable in the
+code listing. Mathematical quantities can be set in LaTex by enclosing the LaTeX
+formulae by the strings \verb|\f$| and \verb|\f$|.
+
+Appendix~\ref{sec:appa} shows listings of sample module files: 
+\begin{enumerate}
+\item a template file \texttt{template\_m.f90} showing the standard
+  usage of the doxygen formatted comments.
+\item an object-oriented pattern file \texttt{oo\_m.f90} showing doxygen
+  comments in the OO factory pattern to be used in \coden\ and
+\item a second, bigger  file \texttt{bigtobj\_m.f90} showing the pattern
+  to be followed for objects with associated file handling.
+\item a object definition file \texttt{bigobj\_h.f90} to go with
+  objects with associated file handling, or which have many different uses.
+\item a program control object-oriented methods module
+  \texttt{qcontrol\_m.f90} for use with program \texttt{qprog}. This reads
+  in data from separate namelists which defines files for the program (as
+  distinct from its modules), a set of parameters for the program and a
+  set of output control options for the program.
+\item a program control object definition module
+  \texttt{qcontrol\_h.f90} for use with module \texttt{qcontrol\_m}.
+\item Main program \texttt{qprog.f90} for program \texttt{qprog}.
+
+\end{enumerate}
+%Appendix ~\ref{sec:appb}, actually now a separate document, shows the
+%doxygen output for these sample modules.
+
+Documentation of the Fortran 95 program files shall take the following
+form:
+\begin{enumerate}
+\item Each file shall have the rubric as
+  specified in Section~\ref{sec:prot-mark-git} and shown in the
+  examples in Appendix~\ref{sec:appa}.
+\item Every module should have after the rubric comments giving the
+  summary detailed design documentation associated with it. This falls
+  under the following five headings, the last two of which are optional
+  if doxygen has been used to produce html documentation:
+  \begin{description}
+  \item[Type]
+ The type should be defined by stating its logical and physical
+ characteristics.
+
+ The \emph{logical characteristics} should be stated by saying which of the
+ following categories the module belongs to (more than one may apply and
+ others may be added):
+ \begin{itemize}
+    \item control data input and checking
+    \item file handling
+    \item geometrical processing
+    \item framework and infrastructure
+    \item magnetic field processing
+ \end{itemize}
+
+ The \emph{physical characteristics} should be defined by stating which of
+ the following descriptions apply to the module (more than one
+ may apply and others may be added):
+ \begin{itemize}
+   \item data module
+   \item execution module
+   \item function
+   \item main program unit
+   \item object-oriented module
+   \item subroutine
+ \end{itemize}
+   \item[Purpose]
+ This section describes the purpose of the module.
+ It traces back to the software requirements which justify the existence 
+ of the module either explicitly by citing the software 
+ requirement or implicitly by saying that this component is a 
+ subordinate of another module.
+    \item[Function]
+ This section describes the function of the module.
+ It should describe what is does rather than how it does it,
+ which should be described in the processing section.
+  \item[Processing] (Optional)
+ This section describes the processing done by the module.
+ It should describe how the module does what it does.
+ The use of pseudocode is encouraged.
+  \item[Dependencies]  (Optional)
+ This section describes what needs to have been done before this
+ module and its subordinate modules can be used.
+  \end{description}
+\item Every subroutine or function should have a comment associated
+  with it saying what it does. A single line comment is usually
+  inadequate, but may be sufficient if details of the code are published
+  or described elsewhere and doxygen-produced documentation is available.
+\item Every variable and type should have a comment associated with it
+  saying what it is. Public variables and dummy arguments will
+  normally need longer descriptions than local variables. Every
+  component of a derived type should have a comment. Multidimensional
+  arrays will normally need longer descriptions than scalar variables
+  because it is necessary to describe what each dimension represents.
+\item Comments for all public quantities should begin with \verb|!>| or \verb|!<|
+  so that doxygen picks them up, with \verb|!!| used for intermediate
+  comment lines. Private quantities can be commented using
+  \verb|!| (or isolated \verb|!!|) depending on whether or not the programmer deems
+  it helpful for the information to be included in the html detailed
+  design documentation generated by doxygen.
+\end{enumerate}
+
+The use of horizontal ruled lines to separate subprograms in modules
+should be used to aid readability of the program listing.
+
+
+\section{Protective markings and version control}\label{sec:prot-mark-git}
+
+Every source file should contain the following header at the top
+of the file.  The text between the \verb|!begin rubric| and 
+\verb|!end rubric| can be updated automatically when necessary.
+%{\small
+%\begin{verbatim}
+%!begin rubric
+%!******************************************************************************
+%!*                United Kingdom Atomic Energy Authority                      *
+%!*                                                                            *
+%!*                                                                            *
+%!*                       SMITER 2015 RELEASE 1.0                              *
+%!*                                                                            *
+%!******************************************************************************
+%!*                                                                            *
+%!* This is an unpublished work created in 2015, any copyright in which vests  *
+%!* in UKAEA and ITER Organisation. All rights reserved.                       *
+%!*                                                                            *
+%!* The information contained in this software is proprietary to UKAEA         *
+%!* and ITER Organisation unless stated otherwise and is                       *
+%!* made available in confidence; it must not be used or disclosed without the *
+%!* express written consent of UKAEA. This document may not be copied in whole *
+%!* or in part in any form without the express written consent of UKAEA.       *
+%!*                                                                            *
+%!* Author: Wayne Arter                                                        *
+%! Copyright (c) 2015, UKAEA and ITER Organisation                             *
+%!******************************************************************************
+%!
+%!--------------------------------------------------------------------------
+%!end rubric
+%\end{verbatim}
+%}
+\input{rubric.f90}
+
+Version control will be by \T{git}. Different deliveries to the customer
+should have an explicit (different) Release number in the rubric.
+For development work, the branch of the git repository used by the developer
+needs to be recorded, then the developer must ensure that the code executed
+is the latest version on the branch \emph{or} explicitly record the version.
+
+\section{File templates}
+Template files are shown in Appendix~\ref{sec:appa}. The first one
+\verb+template_m.f90+ shows the general layout and documentation for a
+module, and the second one, \verb+oo_m.f90+, gives the design pattern
+for an object-oriented module. Developers should copy the appropriate
+template when creating a new module.  %Further template files may be added later.
+
+Template files should be included in the git repository.
+Editors such as Xemacs should be customised so that the template file
+is available from a menu to encourage developers to make use of the
+template.
+
+\section{Extensions}
+
+The only extensions to Fortran 95 that should be used are the use of
+\verb|getarg| and \verb|iargc| for accessing the command line
+arguments and the use of \verb|flush| for flushing output to files.
+ Fortran 2003 introduces standard 
+routines \verb|command_argument_count| and \verb|get_command_argument|
+but currently these are not as widely available as \verb|getarg| and
+\verb|iargc|. \verb|flush| is widely available and is part of Fortran
+2003.
+
+It is assumed that the Fortran 95 compiler used is compliant with
+extensions defined in ISO/IEC TR 15581:2001(E)~\cite{tr15581}, so that
+allocatable arrays are allowed as components of derived types. Note
+that this ISO document is formally a revision of the Fortran 95
+standard.
+
+There are many other features of Fortran 2003 which are
+desirable but none is as vital as the features mentioned above and
+they should be avoided.
+
+
+
+\section{Specify intent for dummy arguments}
+
+Developers should always specify the intent for the dummy arguments of
+subroutines and functions because doing so can help detect errors. It
+also makes the code easier to understand and may allow the compiler to
+produce faster code.
+
+
+\section{Use pure or elemental}
+Use the \verb|pure| or \verb|elemental| prefix for procedures which
+are pure or elemental. This can make them easier to understand 
+and allows them to be used in ways which may enhance the performance of
+the code.
+
+\section{Use only}
+
+Use the \verb|only| keyword with \verb|use| statements if only a few
+names from a module are being used. This makes the code easier to
+understand and more robust, however is arguably the least important of
+all the requirements placed on the developer.
+
+\section{Use keywords for long argument lists}
+
+Use keywords for argument lists if there are more than a few
+arguments. The exact point at which keywords should start to be used
+depends on how regular the argument list is. Consider using
+optional arguments if some of the arguments can have default values
+or are not always needed.
+
+\section{Large automatic arrays}
+
+Do not use large automatic arrays. Allocate storage
+for large arrays using the \verb|allocate| statement.
+Automatic arrays are usually put on the stack and stack size is
+usually limited.
+
+\section{Target attribute}
+
+Use the \verb|target| attribute with the \verb|allocatable| attribute
+when you are going to allocate storage and associate a pointer with
+it. This makes the design intention clearer than using a \verb|pointer|
+attribute and may allow the compiler to produce faster code (although
+there should be no significant speed difference with a good compiler).
+The \verb|pointer| attribute should be reserved for when you are using
+it to define an alias.
+
+It is assumed that the Fortran 95 compiler used is compliant with
+extensions defined in ISO/IEC TR 15581:2001(E)~\cite{tr15581}, so that
+allocatable arrays are allowed as components of derived types. If it
+is not, then the \verb|pointer| attribute must be used instead to
+define allocatable components of a derived type.
+
+Do not use
+{\it 
+\begin{verbatim}
+  integer, pointer :: grpcode(:)
+  type(node_tree), pointer, public :: treenode(:)
+  ...
+  allocate(grpcode(ngrp), stat=istat)
+  ...
+  allocate(treenode(nnode), stat=istat)
+\end{verbatim}
+when the following would be clearer:
+\begin{verbatim}
+  integer, allocatable, target :: grpcode(:)
+  type(node_tree), allocatable, target, public :: treenode(:)
+  ...
+  allocate(grpcode(ngrp), stat=istat)
+  ...
+  allocate(treenode(nnode), stat=istat)
+\end{verbatim}
+}
+
+\section{Deprecated features}
+
+Avoid \texttt{equiv\-alence} statements, \verb|common| blocks,
+the \verb|block data| program unit, and the \verb|entry| statement.
+
+\section{Shape disagreement}
+
+Avoid shape disagreement between dummy arguments and actual arguments 
+unless absolutely necessary. This type of disagreement will usually
+only be necessary if it is wished to view the array as having different
+ranks in different parts of the code. \verb|reshape| could be used
+to avoid the disagreement but this involves two additional copy
+operations. Code which uses shape disagreement should make the 
+implicit reshaping of the array as explicit as possible:
+
+\begin{verbatim}
+real, dimension(1000) :: x
+
+call comp( y=x(101:200), & ! Effectively y=reshape( x(101:200), (/10,10/) ) 
+   &  m=10 , n=10 )
+...
+subroutine comp(y, m, n)
+real, dimension(m,n), intent(inout) :: y
+...
+\end{verbatim}
+
+
+\section{Character length disagreement}
+
+Avoid  character length disagreement between dummy arguments
+and actual arguments.
+
+\section{Redundant features}
+
+Avoid redundant features. These include the \verb|include| line, the
+\verb|do while| loop construct, the \verb|dimension| and
+\verb|parameter| statements and specific names of intrinsic functions
+e.g. \verb|float|, \verb|dsin| etc.
+
+Use \verb|do| and \verb|end do| instead of using statements with
+numerical labels. 
+
+Use the new forms of relation operators \verb|==|, \verb|/=|,
+\verb|<|, \verb|<=|, \verb|>|, and \verb|>=| instead of the old
+forms. {\it The new forms are more compact and easier to read than the 
+  old forms}.
+
+\section{Use simple constructs}
+
+Use simple constructs. Complicated or obscure constructs
+may be hard to understand and are more likely to suffer from compiler
+bugs. 
+
+Do not replace simple code with more complicated
+code to avoid bugs in particular compilers.
+Get the compilers fixed or if absolutely necessary issue temporary
+patches for the code for use with the buggy compilers.
+
+
+The developer should not optimise code prematurely. If it is found
+necessary to optimise code in a way which makes it harder to
+understand the developer should consider having a switch which
+allows the simpler version to be selected.
+
+\section{Include stubs for future development}
+
+Include comments, derived types, and dummy routines for future
+extensions. These can act as a reminder for when the features need 
+to be implemented. Make sure unused features are marked ``not used''
+or are commented out with a clear comment about what they are for.
+
+\section{Named constants}
+
+Consider using named constants rather than literal values to make
+changing the types of variables easier:
+\begin{verbatim}
+  real(rk2), parameter :: one = 1.0_kr2
+\end{verbatim}
+The module \verb|const_numphys_h| provides numerical values for a small
+range of different named numeric constants, such as~$\pi$.
+Inspect the contents of the module to see what is currently available,
+and consider adding new numeric constants here, observing the
+convention that all such variables begin \verb|const_|.
+
+\chapter{Architectural Recommendations}
+\label{sec:arch}
+
+This section describes recommendations which are architectural in nature
+although some of the recommendations in Section~\ref{sec:style} may be
+considered as being architectural as well.
+
+
+\section{Explicit interfaces}
+
+This is the most important architectural recommendation. 
+Explicit interfaces must be used throughout the code.
+This means using Fortran 95 modules (or possibly interface blocks
+to interface to legacy code). The use of explicit interfaces
+allows the compiler to check that actual and dummy arguments
+match in number and type, which reduces programming errors.
+Explicit interfaces also allow the use of keywords, optional arguments
+and generic interfaces which make the code easier to understand and
+maintain.
+
+\section{Parameterised types}
+
+Do not hardwire the types of real and integer variables.
+It may be helpful both for code development and distribution
+on different hardware to be able to change easily between 4, 8
+and 16~byte real numbers for
+different variables, and between 1, 2, 4, and 8~byte integers for
+different variables (codes routinely overflow 4~byte
+integers in computing how much memory or disk space is needed).
+The module \T{const\_kind\_m} is provided for this purpose,
+and should be inspected to ascertain the available types.
+
+\section{Save attributes}
+
+Module variables may become undefined if the module goes out of
+scope. Either use the save attribute on module variables or ensure that
+the module remains in scope. It is safer to use the \verb|save|
+attribute on module variables because it is difficult to make sure
+that the module variables remain in scope.
+
+
+\section{Check status flags}
+
+Always check the error status from \verb|open|,
+\verb|read|, \verb|write| and \verb|allocate|.
+The module \T{log\_m} is provided for this purpose, and contains
+subroutines
+\begin{verbatim}
+       log_open_check ---- checks file opening
+       log_read_check ---- checks result of read
+       log_write_check ---- checks result of write
+       log_alloc_check ---- checks array allocation
+\end{verbatim}
+The errors from \verb|close|, \verb|deallocate| may also be
+significant, but can largely be avoided for example by the use of 
+\begin{verbatim}
+        if (allocated(array)) deallocate(array)
+\end{verbatim}
+
+
+If it is necessary to deal with status flags in line, the style:
+\begin{verbatim}
+  write(luout,stat=istat)
+  if ( istat /= 0 ) then
+    ...
+  end if
+  ...
+  write(luout,stat=istat)
+  if ( istat /= 0 ) then
+    ...
+  end if
+\end{verbatim}
+is better than
+\begin{verbatim}
+  write(luout,err=999)
+  ...
+  write(luout,err=999)
+  ...
+  999 continue
+  ...
+\end{verbatim}
+because the error handling code is closer to the place where the error
+occurs. 
+
+
+
+\section{Choice of data types}
+
+Fortran 95 has a much richer choice of data types and design patterns
+available than Fortran 77. Do not just use the Fortran 77 approach without
+considering the alternatives.
+
+One example where there are more choices is in how to have an array
+of variable-sized arrays. There are three main ways to do this:
+\begin{enumerate}
+\item have an array of indices pointing into a single array
+which actually holds the data,
+\item have an array of pointers to arrays which are associated
+  with a section of a single array or
+\item have an array of pointers to arrays which are associated
+   with storage using the \verb|allocate| statement.
+\end{enumerate}
+Fortran 95 does not allow arrays of pointers which are required for
+options 2 and 3  but it does allow arrays of derived types which
+contain a single component which is a pointer to an array:
+\begin{verbatim}
+ type array_ptr_t
+   real(dbl), dimension(:), pointer :: ptr !! pointer to array
+ end type array_ptr_t
+ ...
+ type(array_ptr_t), dimension(10) :: x !! array of pointers to arrays
+ ...
+ real(dbl), dimension(100), target : storage
+ ...
+ x(2)%ptr => storage(5:104)          ! case 2
+ allocate (x(1)%ptr(100),stat=istat) ! case 3
+\end{verbatim}
+Option 3 is the safest option  and option 1 is the least safe option.
+Option 2 is intermediate but may be useful if developers want to
+manage storage themselves instead of letting the system manage
+storage with \verb|allocate| and \verb|deallocate|.
+An implementation using option 3 can easily be changed to use option
+2 by replacing the \verb|allocate| statement with
+code to manage storage in an array. 
+
+Options 2 and 3 use slightly more 
+storage than option 1 because a pointer will usually consist of an
+address and a small number of integers giving the rank,
+dimensions and strides of the array. The pointer probably 
+needs between 3 and 6 times as much storage as a simple integer index.
+This is usually a small price to pay for the extra safety and improved 
+clarity of the code.
+
+With option 3 it would be better to have an array of allocatable
+arrays.  This can be realised by using a derived type with a single
+component which is an allocatable array, instead of a pointer as
+described above. Note that this requires the
+TR15581~\cite{tr15581} extension to Fortran 95. We shall assume that
+compilers for \coden\ will have this extension.
+% {\it If allocatable arrays were used the compiler would know that the 
+%   arrays were contiguous and did not have non-unit strides or vector
+%   subscripts. Using allocatable arrays would also make the intention of
+%   developers clearer i.e.\ that they are intending to allocate
+%   storage rather than point to existing storage.}
+
+
+
+\section{Record lengths for unformatted direct access files}
+
+The specification of record length for unformatted direct access input 
+and output is mandatory but the unit used in the \verb|recl=|
+specifier in an \verb|open| statement is unspecified.
+
+The \verb|iolength=| specifier should be used with the \verb|inquire|
+statement to determine the record length which should be used.
+The \verb|inquire| statement should be used with all possible
+input/output lists and the maximum length used. This avoids
+making assumptions about how data are packed:
+\begin{verbatim}
+real(kr2), dimension(10) :: x
+integer(ki3), dimension(5) :: i
+integer :: length_max, length
+...
+length_max = 0
+inquire(iolength=length) x(1:5),i(1:2)
+length_max = max(length, length_max)
+inquire(iolength=length) x(1:4),i(1:3)
+length_max = max(length, length_max)
+...
+open(..., recl=length_max, ...)
+...
+write(...)  x(1:5),i(1:2)
+write(...)  x(1:4),i(1:3)
+\end{verbatim}
+It is however reasonable to assume that inserting an extra item in an
+input/output list will not make the record length shorter so that in
+the example above it would also be acceptable to have:
+\begin{verbatim}
+write(...)  x(1:5),i(1)
+write(...)  x(1:4),i(1:2)
+write(...)  x(1:4),i(1:3)
+...
+\end{verbatim}
+
+We don't expect to use formatted direct access files.
+
+\section{Estimating storage sizes}
+\label{sec:sizeof}
+
+The amount of storage required for a type can be estimated using
+the \verb|size| and \verb|transfer| functions:
+
+\begin{verbatim}
+program sizeof
+implicit none
+integer, parameter :: ki1 = selected_int_kind(2)
+integer, parameter :: ki1_bits = bit_size(1_ki1)
+integer, parameter :: ki1_bytes = ki1_bits/8
+type x 
+  real :: y
+  character :: c
+  integer :: i
+end type x
+integer, parameter :: real_bytes = ki1_bytes*size(transfer(1.0,(/1_ki1/)))
+integer, parameter :: char_bytes = ki1_bytes*size(transfer(' ',(/1_ki1/)))
+integer, parameter :: int_bytes = ki1_bytes*size(transfer(1,(/1_ki1/)))
+integer, parameter :: x_bytes = ki1_bytes*size(transfer(x(1.0,'',1),(/1_ki1/)))
+write(*,*) 'integer kind ',ki1,' contains ',ki1_bits,  ' bits'
+write(*,*) 'integer kind ',ki1,' contains ',ki1_bytes,  ' bytes'
+write(*,*) 'real contains ',real_bytes,' bytes'
+write(*,*) 'character contains ',char_bytes,' bytes'
+write(*,*) 'integer contains ',int_bytes,' bytes'
+write(*,*) 'type x contains ',x_bytes,' bytes'
+end program sizeof
+\end{verbatim}
+
+
+% \section{Maximum record lengths for sequential access files}
+
+% {\it Should we use \verb|recl=| specifier to specify maximum record
+%   lengths in \verb|open| statements for sequential access files with
+%   unusually long line lengths or rely on errors being detected
+%   in the i/o statements?} 
+
+  
+\section{Precision and kinds}
+The module \verb|const_kind_m| provides  a set of commonly used variable
+precisions, such as are eg.\ equivalent to single and double precision reals.
+Inspect the contents of the module to see what is currently available,
+and consider adding new variable kinds here, observing the
+convention that all such variables begin \verb|k|.
+%\section{Precision and kinds}
+%
+%We plan to have a precision module which defines the kinds of 
+%real, complex and integer variables that are used in the software.
+%A possible sketch implementation would be:
+%
+%{\small
+%\begin{verbatim}
+%module precision_m
+%   implicit none
+%! set parameters using selected_real_kind and selected_int_kind
+%   integer, parameter, public :: precision_kr1 = ... !! kind for 4 byte reals
+%   integer, parameter, public :: precision_kr2 = ... !! kind for 8 byte reals
+%   integer, parameter, public :: precision_ki1 = ... !! kind for 1 byte integers
+%   integer, parameter, public :: precision_ki2 = ... !! kind for 2 byte integers
+%   integer, parameter, public :: precision_ki3 = ... !! kind for 4 byte integers
+%   integer, parameter, public :: precision_ki4 = ... !! kind for 8 byte integers
+%end module precision_m
+%\end{verbatim}
+%}
+%
+%There are three issues with this design:
+%\begin{enumerate}
+%\item The \verb|precision_kr1| could be the same as
+%  \verb|precision_kr2| (and similarly for other types). This
+%   could be a problem if generic interfaces are used because
+%   there might then be two versions of the same specific implementation.
+% \item The kind parameters above may have negative values if the
+%   appropriate kind is not available. This should be detected at
+%   compile time.
+% \item Fortran uses default integer kind for many purposes.
+%\end{enumerate}
+%
+\section{Error handler and program termination}
+
+Routines should not use the \verb|stop| statement directly.
+The program should only be terminated using a standard interface,
+via a routine defined in the \verb|log_m| module,
+specifically \verb|log_error|. 
+The complete error handling and logging system also requires
+routines \verb|log_init| and \verb|log_close|, and there is
+a facility to record information using subroutine \verb|log_value|.
+
+%\section{Extensible user input}
+%
+%There should be a way of extending the control file input
+%to allow developers to add flags and options for development
+%purposes. There should be a module which contains a 
+%registry of these options.
+%
+%One possible design is to have a module called \verb|expert|
+%which holds the registry of options and utility routines
+%for accessing them.
+%
+%Possible applications of the options handled by the \verb|expert|
+%module could be:
+%\begin{enumerate}
+%\item Choose between BLAS routines and standard Fortran code,
+%\item choose between different implementations,
+%\item turn on extra diagnostics and checks,
+%\item activate self tests,
+%\item request version inventory,
+%\item change edit descriptors.
+%\end{enumerate}
+%
+%The \verb|expert| module can be used for many things that the C conditional
+%compilation directive \verb|#ifdef| is used for.
+%
+%Useful items can be promoted to standard input tags.
+%
+%We would want most modules to be able to use the \verb|expert| module
+%which means that the \verb|expert| module will be able to use very few
+%of the other modules.
+%
+%\section{Self tests}
+%
+%Consider using the \verb|expert| module to activate self tests.
+
+\section{Code monitoring}
+The module \verb|clock_m| is provided to measure cpu times between different
+calls. Inspect the contents of the module to see what is currently available.
+
+The module \verb|date_time_m| provides functions which return the current
+date in either a long or short format, and its routines should be used
+whenever dates or times are required.
+
+\section{Physical and numerical constants}
+The module \verb|const_numphys_h| provides numerical values for a small
+range of different physical and numerical constants, including $\pi$.
+Inspect the contents of the module to see what is currently available,
+and consider adding new physical constants here, observing the
+convention that all such variables begin \verb|const_|.
+
+\section{Selection of I/O units}
+
+A module should be provided for allocating I/O units. This enhances
+portability by avoiding assumptions about which unit numbers are used
+for standard purposes.
+
+
+
+\clearpage
+
+%---------------------------------------------------------------------
+%
+%The references
+%--------------
+
+%using bibTeX
+
+\bibliographystyle{unsrt}
+\bibliography{new,waynes,misc,warv}
+
+%-----------------------------------------------------------------
+%             example of how to add appendix
+%
+% if you want to use the following, remove the above \end{document} 
+
+\cleardoublepage
+\appendix
+\addcontentsline{toc}{part}{APPENDICES}
+
+\part*{APPENDICES}
+\chapter{Sample Modules}\label{sec:appa}
+%\addtocounter{page}{10}
+
+\section{A template module}
+\label{sec:template}
+\setlength{\oddsidemargin}{0.0mm}
+\setlength{\evensidemargin}{\oddsidemargin}
+
+\input{template_m.f90}
+%% To generate files for including here, start with the file.f90 and
+%% (1)a2ps -R -B --highlight-level=heavy --columns=1 -o file.ps file.f90
+%% (2) split file.ps into 1 page files using
+%%    psselect -p1 file.ps file.p1.ps
+%% etcetera
+%% (3) convert files to eps
+%%   ps2eps file.p1.ps
+%% etcetera
+%% (4) if pdf is wanted use epstopdf
+%\enlargethispage*{30pt} 
+%\begin{center}
+%    \includegraphics[width=0.9\textwidth]{template_m_p1}
+%\end{center}
+%\clearpage
+%\begin{center}
+%  \includegraphics[width=0.99\textwidth]{template_m_p2}
+%\end{center}
+%\clearpage
+%\begin{center}
+%  \includegraphics[width=0.99\textwidth]{template_m_p3}
+%\end{center}
+
+
+\section{Object-oriented factory pattern module}
+\label{sec:oopattern}
+
+\input{oo_m.f90}
+\clearpage
+
+
+\section{Big object-oriented methods module}
+\label{sec:oomethods}
+
+\input{bigobj_m.f90}
+\clearpage
+
+
+\section{Big object definition module}
+\label{sec:oodefinition}
+
+\input{bigobj_h.f90}
+\clearpage
+
+
+\section{Program control object-oriented methods module}
+\label{sec:controlmethods}
+
+\input{qcontrol_m.f90}
+\clearpage
+
+
+\section{Program control object definition module}
+\label{sec:controldefinition}
+
+\input{qcontrol_h.f90}
+\clearpage
+
+
+\section{Main program}
+\label{sec:mainprogram}
+
+\input{qprog.f90}
+
+\clearpage
+
+
+%\chapter{doxygen Documentation for Sample Program}\label{sec:appb}
+%
+%This is now a separate document, ref~\cite{QPROGegdoc}, available on request, together
+%with the source code.
+% To generate files for including here, start with file.f90 and
+% (1) doxygen file.f90
+% (2) view file.html using firefox
+% (3) print to ps file file.ddd.ps
+% (4) use items (2)-(4) as described at start of previous subsection to
+% get eps or pdf files as appropriate
+   
+
+
+%\section{template\_m}
+%\label{sec:templatef90}
+%\enlargethispage*{30pt} 
+%\fbox{\includegraphics[width=0.99\textwidth]{template_m_docp1}~~}
+%\clearpage
+%
+% \fbox{\includegraphics[width=0.99\textwidth]{template_m_docp2}~~}
+%\clearpage
+%
+% \fbox{\includegraphics[width=0.99\textwidth]{template_m_docp3}~~}
+%
+%\section{oo\_m}
+%\label{sec:oof90}
+% 
+%\fbox{\includegraphics[width=0.99\textwidth]{oo_m_docp1}~~}
+%
+%\clearpage
+%
+%
+%\fbox{\includegraphics[width=0.99\textwidth]{oo_m_docp2}~~}
+
+\chapter*{Acknowledgement}\label{sec:ackn}
+%The efforts of Drs Morgan and Eastwood of Culham Electromagnetics Ltd in
+%producing an early version of this document are gratefully acknowledged.
+\input{ackn15+sc}
+%
+\normalsize
+%\chapter*{References}
+%\bibliographystyle{unsrt}
+%\bibliography{new,waynes,misc,warv,neuts,dg1srt}
+%\input{annexa}
+\end{document}
