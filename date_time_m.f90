@@ -22,7 +22,8 @@ module date_time_m
   public :: date_time_long
   public :: date_time_short
 
-  character(9), dimension(12), parameter :: month = & !< Month array for long version of date
+!> Month array for long version of date
+  character(9), dimension(12), parameter :: month = & !< local variable
  &(/ 'January  ', 'February ', &
  &'March    ', 'April    ', &
  &'May      ', 'June     ', &

@@ -3,14 +3,17 @@ program p_qprog
   use const_kind_m
   use const_numphys_h
   use date_time_m
+  use log_h
   use log_m
   use clock_m
+  use misc_m
   use gfile_m
   use vfile_m
   use qcontrol_h
   use qcontrol_m
   use bigobj_h
   use bigobj_m
+  use smitermpi_h
 
   implicit none
 

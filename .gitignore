@@ -40,3 +40,7 @@
 !doc
 !sv.tex
 !vn.tex
+!config
+!LIB
+!develop
+!smitermpi_h.f90

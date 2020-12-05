@@ -1,13 +1,25 @@
 #! /bin/bash
-## Script for object-oriented Fortran program
+## Script to generate object-oriented Fortran programa
+# -l option to work as far as possible with files in directory
 # Example where
 # set program, program object and one other object
 # contents of qprog.txt used to generate namelist
 # contents of bigobj.txt merely define data structure
+# runs in local directory, ie. not TEST
+sw=global
+if [ $# -gt 0 ] ;  then
+  test=$1
+  if [ ${test#-} != $test ] ; then
+    if [ ${1#-} = l ] ;  then sw=local ; fi
+    shift
+  fi
+fi
 QPROG=xpc
+# shorthand for QPROG
 Q=xp
 STR="transport_coefficients"
 BIGOBJ=clcoef
+# shorthand for BIGOBJ
 BO=cc
 BSTR="classical_coefficients"
 ## set variables from list key=arg
@@ -35,9 +47,13 @@ echo "object name = " $BIGOBJ
 echo "object id = " $BO
 echo "object description = " $BSTR
 # other initialisation
-export SM=${SMITER_DIR%/*}
-export SMPROG=${SMITER_DIR%/*}/qprog
-export SMDEV=${SMITER_DIR%/*}/develop
+if [ $sw == local ] ; then
+   SMPROG=$(pwd)
+   SMDEV=$(pwd)/develop
+else
+   SMPROG=${SMITER_DIR%/*}/qprog
+   SMDEV=${SMITER_DIR%/*}/develop
+fi
 #
 rm -f spaced.txt work.txt setvar.txt namvarinit.txt namvars.txt namvardecl.txt include.txt
 if [ ! -e $QPROG.txt ] ; then cp $SMPROG/qprog.txt $QPROG.txt;fi
@@ -140,17 +156,28 @@ sed \
 -e "s/bigobj/$BIGOBJ/g" \
 < $SMPROG/qprog.ctl > $QPROG.ctl
 #
-ln -sf $SMITER_DIR/f95/const_kind_m.f90
-ln -sf $SMITER_DIR/f95/const_numphys_h.f90
-ln -sf $SMITER_DIR/f95/date_time_m.f90
-ln -sf $SMITER_DIR/f95/log_m.f90
-ln -sf $SMITER_DIR/f95/clock_m.f90
-ln -sf $SMITER_DIR/f95/gfile_m.f90
-ln -sf $SMITER_DIR/f95/vfile_m.f90
-ln -sf $SMITER_DIR/fortd LIB
-(cd ..;ln -sf $SMITER_DIR/config)
-#lastly produce Makefile and run program
-$SMDEV/makemake $QPROG
-mv Makefile.1 Makefile.$QPROG
+[ ! -f const_kind_m.f90 ] && ln -sf $SMALIB_DIR/f95/const_kind_m.f90
+[ ! -f const_numphys_h.f90 ] && ln -sf $SMALIB_DIR/f95/const_numphys_h.f90
+[ ! -f date_time_m.f90 ] && ln -sf $SMALIB_DIR/f95/date_time_m.f90
+[ ! -f log_m.f90 ] && ln -sf $SMALIB_DIR/f95/log_m.f90
+[ ! -f log_h.f90 ] && ln -sf $SMALIB_DIR/f95/log_h.f90
+[ ! -f clock_m.f90 ] && ln -sf $SMALIB_DIR/f95/clock_m.f90
+[ ! -f gfile_m.f90 ] && ln -sf $SMALIB_DIR/f95/gfile_m.f90
+[ ! -f misc_m.f90 ] && ln -sf $SMALIB_DIR/f95/misc_m.f90
+[ ! -f vfile_m.f90 ] && ln -sf $SMALIB_DIR/f95/vfile_m.f90
+[ ! -f smitermpi_h.f90 ] && ln -sf $SMALIB_DIR/f95/smitermpi_h.f90
+[ ! -d LIB ] && ln -s  $SMALIB_DIR/fortd LIB
+# produce Makefile
+if [ $sw == local ] ; then
+  pushd LIB ;make ; popd
+  $SMDEV/makemake.bash -l $QPROG
+else
+  (cd ..;ln -sf $SMITER_DIR/config)
+  $SMDEV/makemake.bash  $QPROG
+fi
+exit
+#lastly finalise Makefile and run program
+#fix up for mpi work side-effects
+sed -e "s/LIB\/lib/LIB\/libsmarddalib/" -e "s/ \!> Needed for global rank//" -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
 ./$QPROG $QPROG
