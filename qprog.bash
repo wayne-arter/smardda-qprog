@@ -175,7 +175,6 @@ else
   (cd ..;ln -sf $SMITER_DIR/config)
   $SMDEV/makemake.bash  $QPROG
 fi
-exit
 #lastly finalise Makefile and run program
 #fix up for mpi work side-effects
 sed -e "s/LIB\/lib/LIB\/libsmarddalib/" -e "s/ \!> Needed for global rank//" -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
