@@ -183,7 +183,7 @@ if [ $sw == local ] ; then
   $SMDEV/makemake.bash -l $QPROG
 else
   (cd ..;ln -sf $SMITER_DIR/config)
-  $SMDEV/makemake.bash  $QPROG
+  $SMDEV/makemake  $QPROG
 fi
 #finalise Makefile and run program
 #fix up for mpi work side-effects
