@@ -173,6 +173,10 @@ sed \
 [ ! -d LIB ] && ln -s  $SMALIB_DIR/fortd LIB
 # produce doxyfile
 sed -e "s/QPROG/$QPROG/" < doxyfile.qprog > doxyfile
+# configure Fortran compiler
+if [ ! -f config/config.inc ] ; then
+  (cd config; ln -sf config_gfortran_dbg.inc config.inc); echo "gfortran compilation with debug option"
+fi
 # produce Makefile
 if [ $sw == local ] ; then
   pushd LIB ;make ; popd
@@ -182,10 +186,8 @@ else
   $SMDEV/makemake.bash  $QPROG
 fi
 #finalise Makefile and run program
-if [ ! -f config/config.inc ] ; then
-  (cd config; ln -sf config_gfortran_dbg.inc config.inc); echo "gfortran compilation with debug option"
-fi
 #fix up for mpi work side-effects
 sed -e "s/LIB\/lib/LIB\/libsmarddalib/" -e "s/ \!> Needed for global rank//" -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
 ./$QPROG "$QPROG"_case0.ctl
+# configure Fortran compiler

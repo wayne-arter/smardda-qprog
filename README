@@ -62,8 +62,8 @@ BIGOBJ_m.f90 reads in object level controls which may need editing by hand for o
 makefile.QPROG makefile to compile and link QPROG (xpc)
 
 Outputs from execution of QPROG
-xpc.log log data such as date and time of run, cpu measured by internal clocks
-xpc_xpc.out indicative output, precisely object level controls for BIGOBJ
+xpc_case0.log log data such as date and time of run, cpu measured by internal clocks
+xpc_case0_xpc.out indicative output, precisely object level controls for BIGOBJ
 
 Subdirectories for QPROG executable production
 config contains files to set compiler options, default gfortran compilation with debug option
