@@ -44,3 +44,6 @@
 !LIB
 !develop
 !smitermpi_h.f90
+!misc_m.f90
+!log_h.f90
+!doxyfile.qprog

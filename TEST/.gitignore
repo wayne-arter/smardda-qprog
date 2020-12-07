@@ -1,4 +1,4 @@
 *
 !.gitignore
-!bigobj.txt
+!bigobj.dat
 !test.ctl

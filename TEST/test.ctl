@@ -1,5 +1,5 @@
 &progfiles
- prog_input_file='bigobj.txt'
+ prog_input_file='bigobj.dat'
 /
 &miscparameters
  prog_intpar = 1
