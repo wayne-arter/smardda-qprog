@@ -140,7 +140,7 @@ sed \
 sed \
 -e "191a\   type("$Q"numerics_t), intent(in) :: "$Q"numerics !< control  parameters" \
 -e "6a\  use "$QPROG"_h" \
--e "s/ subroutine bigobj_solve(self)/ subroutine "$BIGOBJ"_solve(self,"$Q"numerics)/" \
+-e "s/subroutine bigobj_solve(self)/subroutine "$BIGOBJ"_solve(self,"$Q"numerics)/" \
 -e "s/bonumerics/"$BO"numerics/g" \
 -e "s/noutbo/nout$BO/g" \
 -e "s/ninbo/nin$BO/g" \
@@ -158,7 +158,7 @@ sed \
 sed \
 -e "s/qprog/$QPROG/g" \
 -e "s/bigobj/$BIGOBJ/g" \
-< $SMPROG/qprog.ctl > $QPROG.ctl
+< $SMPROG/qprog.ctl > "$QPROG"_case0.ctl
 #
 [ ! -f const_kind_m.f90 ] && ln -sf $SMALIB_DIR/f95/const_kind_m.f90
 [ ! -f const_numphys_h.f90 ] && ln -sf $SMALIB_DIR/f95/const_numphys_h.f90
@@ -182,10 +182,10 @@ else
   $SMDEV/makemake.bash  $QPROG
 fi
 #finalise Makefile and run program
-if [ ! -f config/config.inc ] then
+if [ ! -f config/config.inc ] ; then
   (cd config; ln -sf config_gfortran_dbg.inc config.inc); echo "gfortran compilation with debug option"
 fi
 #fix up for mpi work side-effects
 sed -e "s/LIB\/lib/LIB\/libsmarddalib/" -e "s/ \!> Needed for global rank//" -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
-./$QPROG $QPROG
+./$QPROG "$QPROG"_case0.ctl

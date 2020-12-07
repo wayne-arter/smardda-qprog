@@ -8,7 +8,7 @@ TEST example .ctl and .dat files setting a .dat file as input
 
 The script qprog.bash will set up a conforming program and try to run it,
 it does not need SMARDDA installation if -l (for locally complete) is set as the first option.
-The program name, its abbreviation (one or two letters) and description are defined using
+The program name, its abbreviation (typically one or two letters) and description are defined using
 the keys QPROG, Q and STR. The name of a skeleton module to be tested, its abbreviation
 and description are defined using the keys BIGOBJ, BO and BSTR, as indicated:
 qprog.bash [-l] \
@@ -35,7 +35,7 @@ bigobj.txt contains the variables defining one object which will normally be def
 instructions resulting from the input variables in qprog.txt, using additional object level controls
 (and of course code to be written by the user).
 In the example, tau_e... and c_tau_e... will be copied to BIGOBJ.txt (clcoef.txt)
-and finish in BIGOBJ_h.f9e
+and finish in BIGOBJ_h.f90.
 
 Scratch files output
 setvar.txt copy to internal variables from namelist variables
@@ -52,7 +52,7 @@ QPROG_h.f90 parameters describing (at least) how to construct first object BIGOB
  such as BIGOBJ_t into type QPROG_t
 QPROG_m.f90 input from QPROGparameters (xpcparameters) in QPROG_readcon, with namelist variables as
  constructed from qprog.txt, copied to  Qnumerics_t
-QPROG.ctl input file for QPROG containing complete list of namelists
+QPROG_case0.ctl input file for QPROG containing complete list of namelists
 Qcontrol_h.f90 data structure of generic top level controls for QPROG abbreviated to Q
 Qcontrol_m.f90 object of generic top level controls for QPROG  abbreviated to Q, calls BIGOBJ_readcon
  via Qcontrol_read.
@@ -61,15 +61,15 @@ BIGOBJ_h.f90 data structure of controls for BIGOBJ in type BOnumerics_t combined
 BIGOBJ_m.f90 reads in object level controls which may need editing by hand for other applications.
 makefile.QPROG makefile to compile and link QPROG (xpc)
 
-Outputs frome execution of QPROG
+Outputs from execution of QPROG
 xpc.log log data such as date and time of run, cpu measured by internal clocks
 xpc_xpc.out indicative output, precisely object level controls for BIGOBJ
 
-Subdirectories
+Subdirectories for QPROG executable production
 config contains files to set compiler options, default gfortran compilation with debug option
 develop for developer use, files and script to produce makefile
 LIB fixed format style Fortran subroutine library
 
-Output from
+Subdirectory
+srcdoc Documentation may be accessed from srcdoc/html/index.html, after executing
 doxygen doxyfile
-in srcdoc/html/index.html
