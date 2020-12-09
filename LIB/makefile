@@ -5,9 +5,9 @@ src =  isnumb.f lowor.f
 
 obj = $(src:.f=.o)
 
-libsmarddalib$(DBG).a: $(obj) 
-	ar ru libsmarddalib$(DBG).a $(obj) 
-	ranlib libsmarddalib$(DBG).a
+libsmarddabit$(DBG).a: $(obj) 
+	ar ru libsmarddabit$(DBG).a $(obj) 
+	ranlib libsmarddabit$(DBG).a
 
 tar: $(src) README makefile
 	tar cvf fort.tar $(src)  README makefile
@@ -16,4 +16,4 @@ clean:
 	rm -f $(obj) 
 
 libclean: clean
-	rm -f libsmarddalib$(DBG).a
+	rm -f libsmarddabit$(DBG).a
