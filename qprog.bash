@@ -55,7 +55,8 @@ else
    SMDEV=${SMITER_DIR%/*}/develop
 fi
 #
-rm -f spaced.txt work.txt setvar.txt namvarinit.txt namvars.txt namvardecl.txt include.txt
+rm -f spaced.txt work.txt setvar.txt namvarinit.txt namvars.txt
+rm -f namvardecl.txt include.txt copvar.txt copvar0.txt
 if [ ! -e $QPROG.txt ] ; then cp $SMPROG/qprog.txt $QPROG.txt;fi
 if [ ! -e $BIGOBJ.txt ] ; then cp $SMPROG/bigobj.txt $BIGOBJ.txt;fi
 ## process variables
@@ -70,6 +71,8 @@ awk '{print "  " $1 " " $2 " " $7 " " $6 " self-explanatory local"}' < work.txt 
 awk '{print " & " $7 " , " "&" }' < work.txt > namvars.txt
 awk '{print "  " $7 " " $4 " " $5 }' < work.txt >namvarinit.txt
 awk '{print "  selfn%" $3 " " $4 " " $7 }' < work.txt > setvar.txt
+awk '{print "  $BOnumerics%" $3 " " $4 " $Qnumerics%" $3 }' < work.txt > copvar0.txt
+sed -e "s/\$BO/$BO/" -e "s/\$Q/$Q/" < copvar0.txt > copvar.txt
 #space object var file spaced OK
 sed -e "s/ *= */ = /" -e "s/ *:: */ :: /" -e 's/ *!< */ !< /' \
 -e "s/^ */     /" < $BIGOBJ.txt  > spaced.txt
@@ -105,6 +108,7 @@ sed \
 -e "199a\  call "$QPROG"_readcon("$Q"numerics,nin)" \
 -e "199a\  " \
 -e "199a\  call "$BIGOBJ"_readcon("$BO"numerics,nin)" \
+-e "199r copvar.txt" \
 -e "s/qcontrol_read(file,param,bonumerics,/qcontrol_read(file,param,bonumerics,"$BO"numerics,/" \
 -e "s/qcontrol_/"$Q"control_/g" \
 -e "s/qfiles/"$Q"files/g" \
@@ -115,7 +119,7 @@ sed \
 < $SMPROG/qcontrol_m.f90 > "$Q"control_m.f90
 # program source file
 sed \
--e "195a\  call "$BIGOBJ"_solve(self%$BIGOBJ,self%n)" \
+-e "195a\  call "$BIGOBJ"_solve(self%$BIGOBJ)" \
 -e "s/bonumerics/"$Q"numerics/g" \
 -e "s/noutbo/nout$Q/g" \
 -e "s/ninbo/nin$Q/g" \
@@ -138,9 +142,6 @@ sed \
 < $SMPROG/bigobj_h.f90 > "$QPROG"_h.f90
 # object source file, special edits first to tie in with QPROG_m
 sed \
--e "191a\   type("$Q"numerics_t), intent(in) :: "$Q"numerics !< control  parameters" \
--e "6a\  use "$QPROG"_h" \
--e "s/subroutine bigobj_solve(self)/subroutine "$BIGOBJ"_solve(self,"$Q"numerics)/" \
 -e "s/bonumerics/"$BO"numerics/g" \
 -e "s/noutbo/nout$BO/g" \
 -e "s/ninbo/nin$BO/g" \
@@ -151,7 +152,8 @@ sed \
 -e "s/bonumerics/"$BO"numerics/g" \
 -e "s/bigobj/$BIGOBJ/g" \
 -e "20r spaced.txt" \
--e"/^! $Note/d" \
+-e "9r include.txt" \
+-e "/^! $Note/d" \
 < $SMPROG/bigobj_h.f90 > "$BIGOBJ"_h.f90
 ##process ctl file and set links
 # input file
