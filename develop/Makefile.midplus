@@ -7,6 +7,9 @@ OBJECTS=$(SOURCES:.f90=.o)
 $(PROG): $(OBJECTS) $(LIBS)
 	$(F90) $(F90FLAGS) -o $(PROG) $(OBJECTS)  $(LIBS)
 
+$(LIBS) :
+	cd ./LIB && $(MAKE)
+
 $(OBJECTS):$(MODULES)
 	@touch .TOUCHFILE
 

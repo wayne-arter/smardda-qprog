@@ -189,7 +189,10 @@ else
 fi
 #finalise Makefile and run program
 #fix up for mpi work side-effects
-sed -e "s/LIB\/lib/LIB\/libsmarddabit/" -e "s/ \!> Needed for global rank//" -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
+sed -e "s/LIB\/lib/LIB\/libsmarddabit/" \
+-e "s/ \!> Needed for global rank//" \
+-e "s/ mpi.mod//" \
+< Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
 ./$QPROG "$QPROG"_case0.ctl
 # configure Fortran compiler

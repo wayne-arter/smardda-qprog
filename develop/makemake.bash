@@ -16,16 +16,18 @@ if [ $# -eq 0 ] || [ $# -gt 2 ] ; then
 fi
 if [ $sw == local ] ; then
   SMDEV=$(pwd)/develop
+  PLUS=plus
 else
 ## HS set to smiter top directory
   if [[ -z "$HS" ]] ; then
     if [[ -n "$SMITER_DIR" ]] ; then HS=$SMITER_DIR; else HS=$HOME/smardda/smiter; fi
   fi
-  export SMDEV=${HS%/*}/develop
+  SMDEV=${HS%/*}/develop
   if [ ! -d $SMDEV ] ; then
     echo "Directory \$SMDEV=$SMDEV does not exist - installation corrupt ?"
     echo "Script quitting"; exit
   fi
+  PLUS=
 fi
 PROG=${1%.f90}
 grep "^  *use" $PROG.f90 > filelist
@@ -51,5 +53,5 @@ wq
 echo " " >> sourcelist
 echo "PROG = $PROG" >> sourcelist
 rm -f Makefile.1
-cat $SMDEV/Makefile.hed sourcelist $SMDEV/Makefile.mid uselist > Makefile.1
+cat $SMDEV/Makefile.hed sourcelist $SMDEV/Makefile.mid$PLUS uselist > Makefile.1
 rm -f uselist sourcelist
