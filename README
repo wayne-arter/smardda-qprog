@@ -44,6 +44,8 @@ namvars.txt namelist variables as list, one per line
 namvardecl.txt declare type of namelist variables
 include.txt declare type of internal variables
 spaced.txt scratch formatted version of qprog.txt and bigobj.txt inputs
+copvar.txt copies (relevant) Qnumerics variables to BOnumerics
+copvar0.txt copies (relevant) Qnumerics variables to BOnumerics
 
 Files output and principal input functions as part of new QPROG (xpc) code
 QPROG.f90 main program, calls QPROG_readcon (xpc_readcon) in module QPROG_m.f90
