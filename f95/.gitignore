@@ -1,0 +1,12 @@
+*
+!.gitignore
+!clock_m.f90
+!const_kind_m.f90
+!const_numphys_h.f90
+!date_time_m.f90
+!gfile_m.f90
+!log_h.f90
+!log_m.f90
+!misc_m.f90
+!smitermpi_h.f90
+!vfile_m.f90

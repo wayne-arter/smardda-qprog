@@ -47,12 +47,11 @@ echo "object name = " $BIGOBJ
 echo "object id = " $BO
 echo "object description = " $BSTR
 # other initialisation
+SMDEV=$(pwd)/develop
 if [ $sw == local ] ; then
-   SMPROG=$(pwd)
-   SMDEV=$(pwd)/develop
+   SMPROG=$(pwd) 
 else
    SMPROG=${SMITER_DIR%/*}/qprog
-   SMDEV=${SMITER_DIR%/*}/develop
 fi
 #
 rm -f spaced.txt work.txt setvar.txt namvarinit.txt namvars.txt
@@ -162,37 +161,41 @@ sed \
 -e "s/bigobj/$BIGOBJ/g" \
 < $SMPROG/qprog.ctl > "$QPROG"_case0.ctl
 #
-[ ! -f const_kind_m.f90 ] && ln -sf $SMALIB_DIR/f95/const_kind_m.f90
-[ ! -f const_numphys_h.f90 ] && ln -sf $SMALIB_DIR/f95/const_numphys_h.f90
-[ ! -f date_time_m.f90 ] && ln -sf $SMALIB_DIR/f95/date_time_m.f90
-[ ! -f log_m.f90 ] && ln -sf $SMALIB_DIR/f95/log_m.f90
-[ ! -f log_h.f90 ] && ln -sf $SMALIB_DIR/f95/log_h.f90
-[ ! -f clock_m.f90 ] && ln -sf $SMALIB_DIR/f95/clock_m.f90
-[ ! -f gfile_m.f90 ] && ln -sf $SMALIB_DIR/f95/gfile_m.f90
-[ ! -f misc_m.f90 ] && ln -sf $SMALIB_DIR/f95/misc_m.f90
-[ ! -f vfile_m.f90 ] && ln -sf $SMALIB_DIR/f95/vfile_m.f90
-[ ! -f smitermpi_h.f90 ] && ln -sf $SMALIB_DIR/f95/smitermpi_h.f90
-[ ! -d LIB ] && ln -s  $SMALIB_DIR/fortd LIB
 # produce doxyfile
 sed -e "s/QPROG/$QPROG/" < doxyfile.qprog > doxyfile
-# configure Fortran compiler
-if [ ! -f config/config.inc ] ; then
-  (cd config; ln -sf config_gfortran_dbg.inc config.inc); echo "gfortran compilation with debug option"
-fi
-# produce Makefile
+# compiler, source and Makefile
+f90local="clock_m.f90 const_numphys_h.f90 gfile_m.f90 log_m.f90 smitermpi_h.f90 \
+ const_kind_m.f90 date_time_m.f90 log_h.f90 misc_m.f90 vfile_m.f90"
 if [ $sw == local ] ; then
+  if [ ! -f config/config.inc ] ; then
+    # configure Fortran compiler and set path
+    echo "gfortran compilation with debug option"
+    (cd config; ln -sf config_gfortran_dbg.inc config.inc
+    rm -f path.inc;sed -e "s/LIB\/lib/LIB\/libsmarddabit/" < path_local.inc > path.inc)
+    #(path.inc is not in fact used)
+  fi
+  # get locals from f90 subdirectory
+  for i in $f90local;do cp -f $i f95/$i .; done
   pushd LIB ;make ; popd
+  # produce Makefile
   $SMDEV/makemake.bash -l $QPROG
 else
-  (cd ..;ln -sf $SMITER_DIR/config)
-  $SMDEV/makemake  $QPROG
+  if [[ -d "$SMALIB_DIR" ]] ; then
+    # use SMARDDA-LIB if defined
+    echo "\$SMALIB_DIR exists and its libraries will be used"
+    (cd config; ln -sf $SMALIB_DIR/config/config.inc; ln -sf $SMALIB_DIR/config/path.inc)
+    # move locals out of the way if present
+    rm -f $f90local
+    # produce Makefile
+    $SMDEV/makemake.bash  $QPROG
+  else
+    echo "\$SMALIB_DIR does not exist - rerun script with -l option"
+  fi
 fi
 #finalise Makefile and run program
 #fix up for mpi work side-effects
 sed -e "s/LIB\/lib/LIB\/libsmarddabit/" \
--e "s/ \!> Needed for global rank//" \
 -e "s/ mpi.mod//" \
 < Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
-./$QPROG "$QPROG"_case0.ctl
-# configure Fortran compiler
+

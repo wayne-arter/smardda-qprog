@@ -75,3 +75,28 @@ LIB fixed format style Fortran subroutine library
 Subdirectory
 srcdoc Documentation may be accessed from srcdoc/html/index.html, after executing
 doxygen doxyfile
+
+Developing software using SMARDDA modules*
+The initial qprog.bash needs to be invoked without the -l option.
+The SMARDDA modules should all be usable. They must exist as a result of an instal of
+SMARDDA-LIB and the environment variable SMALIB_DIR must be set to the resulting directory.
+To add e.g. module beq to program QPROG.f90, ensure that statements
+  use beq_h
+  use beq_m
+are added to the other 'use' statements at the head of QPROG.f90,
+then to update Makefile.QPROG, execute the script
+./develop/makemake.bash QPROG
+followed by
+mv -f Makefile.1 Makefile.QPROG
+(The 'mv' command is kept separate so that the new version Makefile.1 can be first checked
+against the old Makefile.QPROG for custom changes to the latter.)
+
+*The difference between the installation with and without the [-l] option are
+With -l
+The Makefile is configured using the local config/config.inc,
+the .f90 files from subdirectory f95 are copied into the main directory,
+and together with the .f files in subdirectory LIB are compiled and linked into the code.
+Without -l
+The Makefile is configured using config.inc in $SMALIB_DIR/config,
+the .f90 files from subdirectory f95 are removed from the main directory,
+and the libraries in $SMALIB_DIR are used without any attempt at updating.

@@ -6,4 +6,6 @@ include ./config/config.inc
 # Libraries
 LIBS = ./LIB/lib$(DBG).a
 
+SMAPATH = .
+
 SOURCES = \
