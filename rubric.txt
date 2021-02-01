@@ -3,11 +3,11 @@
 !*                United Kingdom Atomic Energy Authority                      *
 !*                                                                            *
 !*                                                                            *
-!*                       QPROG  2015 RELEASE 1.0                              *
+!*                       QPROG  2021 RELEASE 1.0                              *
 !*                                                                            *
 !******************************************************************************
 !*                                                                            *
-!* This is an unpublished work created in 2015, any copyright in which vests  *
+!* This is an unpublished work created in 2021, any copyright in which vests  *
 !* in the United Kingdom Atomic Energy Authority(UKAEA). All rights reserved. *
 !*                                                                            *
 !* The information contained in this software is proprietary to UKAEA         *
@@ -17,7 +17,7 @@
 !* or in part in any form without the express written consent of UKAEA.       *
 !*                                                                            *
 !* Author: Wayne Arter                                                        *
-! Copyright (c) 2015, UKAEA                                                   *
+! Copyright (c) 2021, UKAEA                                                   *
 !******************************************************************************
 !
 !--------------------------------------------------------------------------

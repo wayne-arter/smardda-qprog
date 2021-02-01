@@ -15,12 +15,11 @@ if [ $# -eq 0 ] || [ $# -gt 2 ] ; then
   exit
 fi
 SMDEV=$(pwd)/develop
+VPATH=path
 if [ $sw == local ] ; then
   PLUS=plus
-  VPATH=
 else
   PLUS=
-  VPATH=path
 fi
 PROG=${1%.f90}
 grep "^  *use" $PROG.f90 > filelist
@@ -53,7 +52,5 @@ echo "PROG = $PROG" >> sourcelist
 rm -f Makefile.0 Makefile.1
 cat $SMDEV/Makefile.hed$VPATH sourcelist $SMDEV/Makefile.mid$PLUS uselist > Makefile.0
 #fix up for mpi work side-effects
-sed -e "s/LIB\/lib/LIB\/libsmarddabit/" \
--e "s/ mpi.mod//" \
-< Makefile.0 > Makefile.1
+sed -e "s/ mpi.mod//" < Makefile.0 > Makefile.1
 rm -f filelist uselist sourcelist sourcelist.0 Makefile.0

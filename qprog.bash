@@ -172,7 +172,6 @@ if [ $sw == local ] ; then
     echo "gfortran compilation with debug option"
     (cd config; ln -sf config_gfortran_dbg.inc config.inc
     rm -f path.inc;sed -e "s/LIB\/lib/LIB\/libsmarddabit/" < path_local.inc > path.inc)
-    #(path.inc is not in fact used)
   fi
   # get locals from f90 subdirectory
   for i in $f90local;do cp -f $i f95/$i .; done
@@ -194,8 +193,7 @@ else
 fi
 #finalise Makefile and run program
 #fix up for mpi work side-effects
-sed -e "s/LIB\/lib/LIB\/libsmarddabit/" \
--e "s/ mpi.mod//" \
-< Makefile.1 > Makefile.$QPROG
+sed -e "s/ mpi.mod//" < Makefile.1 > Makefile.$QPROG
 make -f Makefile.$QPROG
-
+rm -f spaced.txt copvar0.txt copvar.txt setvar.txt namvarinit.txt namvars.txt namvardecl.txt \
+include.txt work.txt clcoef.txt xpc.txt
