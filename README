@@ -53,14 +53,14 @@ QPROG_h.f90 parameters describing (at least) how to construct first object BIGOB
  Qnumerics_t (xpnumerics_t) which is to  be combined with other object data structures
  such as BIGOBJ_t into type QPROG_t
 QPROG_m.f90 input from QPROGparameters (xpcparameters) in QPROG_readcon, with namelist variables as
- constructed from qprog.txt, copied to  Qnumerics_t
+ constructed from qprog.txt, copied to  Qnumerics_t, *will generally need editing by hand*.
 QPROG_case0.ctl input file for QPROG containing complete list of namelists
 Qcontrol_h.f90 data structure of generic top level controls for QPROG abbreviated to Q
 Qcontrol_m.f90 object of generic top level controls for QPROG  abbreviated to Q, calls BIGOBJ_readcon
  via Qcontrol_read.
 BIGOBJ_h.f90 data structure of controls for BIGOBJ in type BOnumerics_t combined into type BIGOBJ_t,
- may need editing by hand for other applications.
-BIGOBJ_m.f90 reads in object level controls which may need editing by hand for other applications.
+ may need editing by hand for more complex applications.
+BIGOBJ_m.f90 reads in object level controls, *will generally need editing by hand*.
 makefile.QPROG makefile to compile and link QPROG (xpc)
 
 Outputs from execution of QPROG
