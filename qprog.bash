@@ -72,6 +72,8 @@ awk '{print " & " $7 " , " "&" }' < work.txt > namvars.txt
 awk '{print "  " $7 " " $4 " " $5 }' < work.txt >namvarinit.txt
 awk '{print "  selfn%" $3 " " $4 " " $7 }' < work.txt > setvar.txt
 awk '{print "  $BOnumerics%" $3 " " $4 " $Qnumerics%" $3 }' < work.txt > copvar0.txt
+echo "  \$BOnumerics%formula = \$Qnumerics%formula" >> copvar0.txt
+echo "  \$BOnumerics%f = \$Qnumerics%f" >> copvar0.txt
 sed -e "s/\$BO/$BO/" -e "s/\$Q/$Q/" < copvar0.txt > copvar.txt
 #space object var file spaced OK
 sed -e "s/ *= */ = /" -e "s/ *:: */ :: /" -e 's/ *!< */ !< /' \
