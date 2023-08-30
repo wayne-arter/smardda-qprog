@@ -63,6 +63,14 @@ BIGOBJ_h.f90 data structure of controls for BIGOBJ in type BOnumerics_t combined
 BIGOBJ_m.f90 reads in object level controls, *will generally need editing by hand*.
 makefile.QPROG makefile to compile and link QPROG (xpc)
 
+In one example, edits to QPROG_m.f90 are
+(1) QPROG_dia to call sum_dia, 
+(2) QPROG_writeg to call BIGOBJ_writeg,
+and edits to BIGOBJ_m.f90
+(1) add to BIGOBJ_solve to do new work, 
+(2) add to BIGOBJ_dia for new output to .log filet
+(3) add to BIGOBJ_writeg to output to .gnu file
+
 Outputs from execution of QPROG
 xpc_case0.log log data such as date and time of run, cpu measured by internal clocks
 xpc_case0_xpc.out indicative output, precisely object level controls for BIGOBJ
