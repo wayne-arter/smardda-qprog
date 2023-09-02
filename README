@@ -65,7 +65,8 @@ makefile.QPROG makefile to compile and link QPROG (xpc)
 
 In one example, edits to QPROG_m.f90 are
 (1) QPROG_dia to call sum_dia, 
-(2) QPROG_writeg to call BIGOBJ_writeg,
+(2) QPROG_write to list key input parameters to .out file
+(3) QPROG_writeg to call BIGOBJ_writeg,
 and edits to BIGOBJ_m.f90
 (1) add to BIGOBJ_solve to do new work, 
 (2) add to BIGOBJ_dia for new output to .log filet
