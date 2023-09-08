@@ -2,10 +2,6 @@ Example Fortran 95, .doc and rubric files corresponding to CCFE-R(15)34
 https://scientific-publications.ukaea.uk/wp-content/uploads/CCFE-R-1534.pdf
 http://dx.doi.org/10.13140/RG.2.2.27018.41922
 
-Subdirectories
-doc produce latest version of CCFE-R(15)34 from f90 files, see README
-TEST example .ctl and .dat files setting a .dat file as input
-
 The script qprog.bash will set up a conforming program and try to run it,
 it does not need SMARDDA installation if -l (for locally complete) is set as the first option.
 The program name, its abbreviation (typically one or two letters) and description are defined using
@@ -84,3 +80,7 @@ LIB fixed format style Fortran subroutine library
 Subdirectory
 srcdoc Documentation may be accessed from srcdoc/html/index.html, after executing
 doxygen doxyfile
+
+Other subdirectories
+doc produce latest version of CCFE-R(15)34 from f90 files, see README
+TEST specialist example .ctl and .dat files setting a .dat file as input
