@@ -70,7 +70,7 @@ and edits to BIGOBJ_m.f90
 
 Outputs from execution of QPROG
 QPROG_case0.log log data such as date and time of run, cpu measured by internal clocks
-QPROG_case0.out indicative output, precisely object level controls for BIGOBJ
+QPROG_case0_QPROG.out indicative output, precisely object level controls for BIGOBJ
 
 Subdirectories for QPROG executable production
 config contains files to set compiler options, default gfortran compilation with debug option
