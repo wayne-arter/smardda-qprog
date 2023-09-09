@@ -7,7 +7,7 @@ it does not need SMARDDA installation if -l (for locally complete) is set as the
 The program name, its abbreviation (typically one or two letters) and description are defined using
 the keys QPROG, Q and STR. The name of a skeleton module to be tested, its abbreviation
 and description are defined using the keys BIGOBJ, BO and BSTR, as indicated:
-qprog.bash [-l] \
+./qprog.bash -l \
 QPROG=xpc Q=xp STR="transport_coefficients" \
 BIGOBJ=clcoef BO=cc BSTR="classical_coefficients"
 Notes

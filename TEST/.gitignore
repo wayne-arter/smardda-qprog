@@ -2,3 +2,5 @@
 !.gitignore
 !bigobj.dat
 !test.ctl
+!xpc_case0.log
+!xpc_case0_xpc.out

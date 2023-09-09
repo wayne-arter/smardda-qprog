@@ -1,0 +1,28 @@
+
+LOG FILE: xpc_case0.log
+
+05:59:55 9 September 2023       
+
+Log  : Control data file = xpc_case0.ctl
+Log  : xpc data file, prog_input_file = null
+Log  : Info   : xpc_m:xpc_initfile: 1:- null filename ignored
+Log  : power  =        0.0000000    
+Log  : Control data file = xpc_case0_xpc.out
+Log  :                         run time  =  9.60000000E-05  secs
+Log  :      control initialisation time  =  2.10000000E-05  secs
+Log  :              initialisation time  =  3.00000000E-06  secs
+Log  :                  evaluation time  =  1.00000000E-06  secs
+Log  :                 diagnostics time  =  9.00000000E-06  secs
+Log  :                    vtk plot time  =  0.00000000E+00  secs
+Log  :                     gnuplot time  =  0.00000000E+00  secs
+Log  :                outfile_init time  =  2.20000000E-05  secs
+
+
+ Error Summary 
+ ------------- 
+ total number of errors   =       0
+ number of serious errors =       0
+05:59:55 9 September 2023       
+
+END OF LOG FILE
+
