@@ -82,5 +82,5 @@ srcdoc Documentation may be accessed from srcdoc/html/index.html, after executin
 doxygen doxyfile
 
 Other subdirectories
-doc produce latest version of CCFE-R(15)34 from f90 files, see README
-TEST specialist example .ctl and .dat files setting a .dat file as input
+doc produce latest version of CCFE-R(15)34 from f90 files, see local README
+TEST outputs to compare specialist example .ctl and .dat files setting a .dat file as input
