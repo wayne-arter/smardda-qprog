@@ -134,7 +134,7 @@ subroutine bigobj_readcon(selfn,channel)
      if(power_split<0.OR.power_split>1) &
  &   call log_error(m_name,s_name,21,error_fatal,'power_split must be >=0 and <=1')
 
-  case('userdefined')
+  case('userdefined','additional')
      if(number_of_real_parameters<0) &
  &   call log_error(m_name,s_name,44,error_fatal,'number of real parameters must be >=0')
      if(number_of_real_parameters>MAX_NUMBER_OF_PARAMETERS) then
@@ -164,7 +164,7 @@ subroutine bigobj_readcon(selfn,channel)
 
   formula_allocate: select case (bigobj_formula)
 
-  case('userdefined')
+  case('userdefined','additional')
      if (number_of_real_parameters>0) then
         allocate(selfn%rpar(number_of_real_parameters), stat=status)
         call log_alloc_check(m_name,s_name,65,status)
@@ -242,7 +242,7 @@ function bigobj_fn(self,psi)
   pow=0._kr8
   !! select bigobj
   formula_chosen: select case (self%n%formula)
-  case('userdefined')
+  case('userdefined','additional')
      pow=bigobj_userdefined(self,psi)
   end select formula_chosen
 
@@ -262,15 +262,10 @@ subroutine bigobj_initwrite(fileroot,channel)
   logical :: unitused !< flag to test unit is available
   character(len=80) :: outputfile !< output file name
 
-  !! get file unit
-  do i=99,1,-1
-     inquire(i,opened=unitused)
-     if(.not.unitused)then
-        if (present(channel)) channel=i
-        exit
-     end if
-  end do
-  noutbo=i
+! get file unit do i=99,1,-1 inquire(i,opened=unitused) if(.not.unitused)then if (present(channel)) channel=i exit end if end do noutbo=i
+
+  call misc_getfileunit(noutbo)
+  if (present(channel)) channel=noutbo
 
   !! open file
   outputfile=trim(fileroot)//"_bigobj.out"
@@ -409,7 +404,7 @@ subroutine bigobj_delete(self)
   character(*), parameter :: s_name='bigobj_delete' !< subroutine name
 
   formula_deallocate: select case (self%n%formula)
-  case('userdefined')
+  case('userdefined','additional')
      if (self%n%nrpams>0) deallocate(self%n%rpar)
      if (self%n%nipams>0) deallocate(self%n%npar)
   case default

@@ -97,9 +97,10 @@ selfn%nrpams=number_of_real_parameters
 selfn%nipams=number_of_integer_parameters
 selfn%rpar=general_real_parameters(:number_of_real_parameters)
 selfn%npar=general_integer_parameters(:number_of_integer_parameters)
+and will come into play when setting the namelist variable xpc_formula='additional'
 
 This use is complicated by the fact that the same four "PAMS" variable names (short or long forms)
-necessarily appear in two places,
+together with  the  bigobj_formula variable necessarily appear in two places,
 as there are two big objects produced by qprog.bash, namely xpc and clcoef. It helps anyway to explain
 the structure for controlling input which is generic:
 The split adopted in xpc.f90 is first, to initialise the control
@@ -126,4 +127,4 @@ Thereafter, xpcontrol_read calls
  (2) clcoef_readcon to read in type ccnumerics, checks the validity of the inputs and assign to xpc%clcoef%n
  A special feature of the relatively simple qprog represented by xpc is that all the variables in the
  sub-object of type ccnumerics are set by copying their counterparts in xpnumerics
- (effectively xpc%clcoef%n=xpc%n), EXCEPT for the PAMS variables.
+ (effectively xpc%clcoef%n=xpc%n), EXCEPT for the PAMS variables including bigobj_formula.
