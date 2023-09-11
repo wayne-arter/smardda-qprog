@@ -20,7 +20,7 @@ if [ $sw == local ] ; then
 else
   PLUS=codlib
 fi
-## If no local develop directory, try to use smardda/develop directory
+## If no develop subdirectory, try to use smardda/develop directory
 if [ ! -d $SMDEV ] ; then
     echo "Local directory \$SMDEV=$SMDEV does not exist - trying to use smardda/develop"
   if [[ -z "$HS" ]] ; then
@@ -53,5 +53,6 @@ echo " " >> sourcelist
 echo "PROG = $PROG" >> sourcelist
 rm -f Makefile.1
 cat $SMDEV/Makefile.hed$PLUS sourcelist $SMDEV/Makefile.mid$PLUS uselist > Makefile.1
+#fix up for mpi work side-effects
 sed -i -e "s/ *!>.*/.mod/" -e "s/ mpi.mod//" Makefile.1
 rm -f uselist sourcelist
