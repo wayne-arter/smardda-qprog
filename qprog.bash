@@ -47,11 +47,14 @@ echo "object name = " $BIGOBJ
 echo "object id = " $BO
 echo "object description = " $BSTR
 # other initialisation
-if [ $sw == local ] ; then
-   SMPROG=$(pwd)
-   SMDEV=$(pwd)/develop
-else
-   SMPROG=${SMITER_DIR%/*}/qprog
+SMPROG=$(pwd)
+SMDEV=$(pwd)/develop
+if [ ! -d $SMDEV ] ; then
+  echo "Local directory \$SMDEV=$SMDEV does not exist - trying to use smardda/develop"
+  if [[ -z "$HS" ]] ; then
+    if [[ -n "$SMITER_DIR" ]] ; then HS=$SMITER_DIR; else HS=$HOME/smardda/smiter; fi
+  fi 
+  # SMPROG=${SMITER_DIR%/*}/qprog
    SMDEV=${SMITER_DIR%/*}/develop
 fi
 #
@@ -184,17 +187,15 @@ fi
 # produce Makefile
 if [ $sw == local ] ; then
   pushd LIB ;make ; popd
-  $SMDEV/makemake.bash -l $QPROG
+  $SMDEV/makemakecod.bash -l $QPROG
+  sed -i -e "s/LIB\/lib/LIB\/libsmarddabit/" Makefile.1
 else
   (cd ..;ln -sf $SMITER_DIR/config)
-  $SMDEV/makemake  $QPROG
+  $SMDEV/makemakecod.bash  $QPROG
 fi
 #finalise Makefile and run program
-#fix up for mpi work side-effects
-sed -e "s/LIB\/lib/LIB\/libsmarddabit/" \
--e "s/ \!> Needed for global rank//" \
--e "s/ mpi.mod//" \
-< Makefile.1 > Makefile.$QPROG
+rm -f Makefile.$QPROG
+cp Makefile.1  Makefile.$QPROG
 make -f Makefile.$QPROG
 ./$QPROG "$QPROG"_case0.ctl
 # configure Fortran compiler
