@@ -3,21 +3,33 @@
 #*                United Kingdom Atomic Energy Authority                      *
 #*                                                                            *
 #*                                                                            *
-#*                       QPROG  2015 RELEASE 1.0                              *
+#*                       QPROG  2023 RELEASE 1.1                              *
 #*                                                                            *
 #******************************************************************************
 #*                                                                            *
-#* This is an unpublished work created in 2015, any copyright in which vests  *
+#* This is an unpublished work created in 2023, any copyright in which vests  *
 #* in the United Kingdom Atomic Energy Authority(UKAEA). All rights reserved. *
 #*                                                                            *
-#* The information contained in this software is proprietary to UKAEA         *
-#* unless stated otherwise and is                                             *
-#* made available in confidence; it must not be used or disclosed without the *
-#* express written consent of UKAEA. This document may not be copied in whole *
-#* or in part in any form without the express written consent of UKAEA.       *
+#* Permission is hereby granted, free of charge, to any person obtaining a    *
+#* copy of this software and associated documentation files (the “Software”), *
+#* to deal in the Software without restriction, including without limitation  *
+#* the rights to use, copy, modify, merge, publish, distribute, sublicense,   *
+#* and/or sell copies of the Software, and to permit persons to whom the      *
+#* Software is furnished to do so, subject to the following conditions:       *
+#*                                                                            *
+#* The copyright notice below and this permission notice shall be included in *
+#* all copies or substantial portions of the Software.                        *
+#*                                                                            *
+#* THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR *
+#* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,   *
+#* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL    *
+#* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER *
+#* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING    *
+#* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER        *
+#* DEALINGS IN THE SOFTWARE.                                                  *
 #*                                                                            *
 #* Author: Wayne Arter                                                        *
-# Copyright (c) 2015, UKAEA                                                   *
+# Copyright (c) 2023, UKAEA                                                   *
 #******************************************************************************
 #
 #--------------------------------------------------------------------------
