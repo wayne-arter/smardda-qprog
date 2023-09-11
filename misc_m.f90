@@ -15,6 +15,7 @@ module misc_m
  &misc_lines2d, &  !< sample 2-D straight lines between end-points
  &misc_anglevec, & !< return angle in degrees between two vectors
  &misc_fsuffixget, & !< get file suffix as lower case string
+ &misc_fileafter, & !< move to point in file after line beginning with string
  &misc_countnos
 
 ! public types
@@ -258,5 +259,28 @@ subroutine misc_countnos(bigbuf,kfmt)
   end do
   kfmt=(iblan+1)/3
 end subroutine misc_countnos
+!>---------------------------------------------------------------------
+subroutine misc_fileafter(kfind,kin)
+  !< move to point in file after line beginning with string
+  !! arguments
+  character(len=*), intent(in) :: kfind   !< character string to find
+  integer, intent(in) :: kin   !< file unit for reading
+
+  !! local
+  character(*), parameter :: s_name='misc_fileafter' !< subroutine name
+  character(len=80) :: ibuff   !< character string
+
+  do
+     read(kin,fmt='(a)',iostat=status) ibuff
+     call log_read_check(m_name,s_name,1,status)
+     if (adjustl(ibuff)==kfind) exit
+  end do
+
+  if (adjustl(ibuff)/=kfind) then
+     ! jm string not found
+     call log_error(m_name,s_name,10,error_fatal,'Error reading object data')
+  end if
+
+end subroutine misc_fileafter
 
 end module misc_m

@@ -60,7 +60,7 @@ BIGOBJ_m.f90 reads in object level controls, *will generally need editing by han
 makefile.QPROG makefile to compile and link QPROG (xpc)
 
 In one example, edits to QPROG_m.f90 are
-(1) QPROG_dia to call object diagnostics control routine sum_dia, 
+(1) QPROG_dia to call object diagnostics control routine BIGOBJ_dia, 
 (2) QPROG_write to list key input parameters to .out file
 (3) QPROG_writeg to call gnuplot output control routine BIGOBJ_writeg,
 and edits to BIGOBJ_m.f90
@@ -84,3 +84,46 @@ doxygen doxyfile
 Other subdirectories
 doc produce latest version of CCFE-R(15)34 from f90 files, see local README
 TEST outputs to compare specialist example .ctl and .dat files setting a .dat file as input
+
+
+Updating auto-generated QPROG code
+----------------------------------
+At present, there is limited scope for updating, indeed repeated use of qprog.bash should be
+avoided as likely to overwrite user-written code. The most likely need for new input variables
+can be addressed by use of the variables provided as defaults, viz. 
+general_real_parameters, number_of_real_parameters, general_integer_parameters and number_of_integer_parameters
+which map as follows into Qnumerics namelist variables
+selfn%nrpams=number_of_real_parameters
+selfn%nipams=number_of_integer_parameters
+selfn%rpar=general_real_parameters(:number_of_real_parameters)
+selfn%npar=general_integer_parameters(:number_of_integer_parameters)
+
+This use is complicated by the fact that the same four "PAMS" variable names (short or long forms)
+necessarily appear in two places,
+as there are two big objects produced by qprog.bash, namely xpc and clcoef. It helps anyway to explain
+the structure for controlling input which is generic:
+The split adopted in xpc.f90 is first, to initialise the control
+structure (xpcontrol_h, methods in xpcontrol_m.f90), which of course
+now consists of an aggregate of control structures, one for each object
+(referred to as a sub-object) forming xpc_h. Each control
+structure, typically qnumerics_h some q, is initialised as one or
+more namelists in a single input file, when xpcontrol_read calls
+structure_readcon, making use of the optional unit number argument.
+(Program nucode also has a routine xpcontrol_fix which might be
+used e.g. to enforce consistency on the various control structures.)
+
+In the present example, 
+(1) xpc is described by a namelist xpcparameters which is
+ used to set object xpc%n of type xpnumerics containing the PAMS variables among others.
+(2) clcoef is described by a namelist clcoefparameters which is
+ used to set object xpc%clcoef%n of type ccnumerics containing the PAMS variables among others
+ (since object clcoef is a sub-object of xpc).
+xpcontrol_m  initialises by default 3 namelists designed to define global control variables 
+ file, param and plot for xpc, respectively progfiles, miscparameters and plotselections.
+ (The miscellaneous parameters are a character string, an integer, a real and a logical.)
+Thereafter, xpcontrol_read calls 
+ (1) xpc_readcon to read in type xpnumerics, checks the validity of the inputs and assign to xpc%n
+ (2) clcoef_readcon to read in type ccnumerics, checks the validity of the inputs and assign to xpc%clcoef%n
+ A special feature of the relatively simple qprog represented by xpc is that all the variables in the
+ sub-object of type ccnumerics are set by copying their counterparts in xpnumerics
+ (effectively xpc%clcoef%n=xpc%n), EXCEPT for the PAMS variables.
