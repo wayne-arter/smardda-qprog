@@ -6,9 +6,9 @@ program p_qprog
   use log_h
   use log_m
   use clock_m
-  use misc_m
   use gfile_m
   use vfile_m
+  use misc_m
   use qcontrol_h
   use qcontrol_m
   use bigobj_h

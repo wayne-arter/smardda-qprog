@@ -3,6 +3,7 @@ module smallobj_m
   use log_m
   use const_numphys_h
   use const_kind_m
+  use misc_m
 
   implicit none
   private
@@ -59,15 +60,10 @@ subroutine smallobj_initfile(file,channel)
      return
   end if
 
-  !! get file unit
-  do i=99,1,-1
-     inquire(i,opened=unitused)
-     if(.not.unitused)then
-        ninso=i
-        if (present(channel)) channel=i
-        exit
-     end if
-  end do
+! get file unit do i=99,1,-1 inquire(i,opened=unitused) if(.not.unitused)then ninso=i if (present(channel)) channel=i exit end if end do
+
+  call misc_getfileunit(ninso)
+  if (present(channel)) channel=ninso
 
   !! open file
   controlfile=trim(file)

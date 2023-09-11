@@ -2,6 +2,7 @@ module qcontrol_m
 
   use const_kind_m
   use log_m
+  use misc_m
   use qcontrol_h
   use bigobj_h
   use bigobj_m
@@ -38,14 +39,9 @@ subroutine qcontrol_init(fileroot)
   character(len=80) :: controlfile !< control file name
 
 
-  !! get file unit
-  do i=99,1,-1
-     inquire(i,opened=unitused)
-     if(.not.unitused)then
-        nin=i
-        exit
-     end if
-  end do
+! get file unit do i=99,1,-1 inquire(i,opened=unitused) if(.not.unitused)then nin=i exit end if end do
+
+  call misc_getfileunit(nin)
 
   !! open file
   controlfile=trim(fileroot)//".ctl"

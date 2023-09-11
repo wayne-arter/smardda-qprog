@@ -104,13 +104,13 @@ sed \
 # control source file
 sed \
 -e "s/qprog/$QPROG/g" \
--e "7a\  use "$BIGOBJ"_h" \
--e "7a\  use "$BIGOBJ"_m" \
--e "80a\  type("$BO"numerics_t), intent(out) :: "$BO"numerics !< controls for $BSTR" \
--e "199a\  call "$QPROG"_readcon("$Q"numerics,nin)" \
--e "199a\  " \
--e "199a\  call "$BIGOBJ"_readcon("$BO"numerics,nin)" \
--e "199r copvar.txt" \
+-e "8a\  use "$BIGOBJ"_h" \
+-e "8a\  use "$BIGOBJ"_m" \
+-e "76a\  type("$BO"numerics_t), intent(out) :: "$BO"numerics !< controls for $BSTR" \
+-e "195a\  call "$QPROG"_readcon("$Q"numerics,nin)" \
+-e "195a\  " \
+-e "195a\  call "$BIGOBJ"_readcon("$BO"numerics,nin)" \
+-e "195r copvar.txt" \
 -e "s/qcontrol_read(file,param,bonumerics,/qcontrol_read(file,param,bonumerics,"$BO"numerics,/" \
 -e "s/qcontrol_/"$Q"control_/g" \
 -e "s/qfiles/"$Q"files/g" \
@@ -121,17 +121,17 @@ sed \
 < $SMPROG/qcontrol_m.f90 > "$Q"control_m.f90
 # program source file
 sed \
--e "195a\  call "$BIGOBJ"_solve(self%$BIGOBJ)" \
+-e "191a\  call "$BIGOBJ"_solve(self%$BIGOBJ)" \
 -e "s/bonumerics/"$Q"numerics/g" \
 -e "s/noutbo/nout$Q/g" \
 -e "s/ninbo/nin$Q/g" \
 -e "s/bigobj/$QPROG/g" \
--e "6a\  use "$BIGOBJ"_h" \
--e "6a\  use "$BIGOBJ"_m" \
--e "183r setvar.txt" \
--e "112r namvarinit.txt" \
--e "100r namvars.txt" \
--e "92r namvardecl.txt" \
+-e "7a\  use "$BIGOBJ"_h" \
+-e "7a\  use "$BIGOBJ"_m" \
+-e "179r setvar.txt" \
+-e "108r namvarinit.txt" \
+-e "96r namvars.txt" \
+-e "88r namvardecl.txt" \
 < $SMPROG/bigobj_m.f90 > "$QPROG"_m.f90
 #program include file
 sed \

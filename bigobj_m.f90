@@ -4,6 +4,7 @@ module bigobj_m
   use log_m
   use const_numphys_h
   use const_kind_m
+  use misc_m
 
   implicit none
   private
@@ -55,15 +56,10 @@ subroutine bigobj_initfile(file,channel)
      return
   end if
 
-  !! get file unit
-  do i=99,1,-1
-     inquire(i,opened=unitused)
-     if(.not.unitused)then
-        ninbo=i
-        if (present(channel)) channel=i
-        exit
-     end if
-  end do
+! get file unit do i=99,1,-1 inquire(i,opened=unitused) if(.not.unitused)then ninbo=i if (present(channel)) channel=i exit end if end do
+
+  call misc_getfileunit(ninbo)
+  if (present(channel)) channel=ninbo
 
   !! open file
   controlfile=trim(file)

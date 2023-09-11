@@ -58,7 +58,7 @@ PROG = qprog
 
 MODULES=$(SOURCES:.f90=.mod)
 
-OBJECTS=$(SOURCES:.f90=.o) 
+OBJECTS=$(SOURCES:.f90=.o)
 
 obj = $(src:.f=.o)
 
@@ -77,6 +77,8 @@ clean:
 distclean: clean
 	rm -f $(PROG) 
 
+txt:
+	cat Makefile.$(PROG) $(SOURCES) > $(PROG).txt
 
 .PHONY : clean distclean
 
@@ -117,6 +119,7 @@ vfile_m.f90 : smitermpi_h.mod
 qcontrol_h.f90 : const_kind_m.mod
 qcontrol_m.f90 : const_kind_m.mod
 qcontrol_m.f90 : log_m.mod
+qcontrol_m.f90 : misc_m.mod
 qcontrol_m.f90 : qcontrol_h.mod
 qcontrol_m.f90 : bigobj_h.mod
 qcontrol_m.f90 : bigobj_m.mod
@@ -125,4 +128,5 @@ bigobj_m.f90 : bigobj_h.mod
 bigobj_m.f90 : log_m.mod
 bigobj_m.f90 : const_numphys_h.mod
 bigobj_m.f90 : const_kind_m.mod
+bigobj_m.f90 : misc_m.mod
 smitermpi_h.f90 : const_kind_m.mod
