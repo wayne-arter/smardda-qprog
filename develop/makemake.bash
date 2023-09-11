@@ -14,20 +14,19 @@ if [ $# -eq 0 ] || [ $# -gt 2 ] ; then
   echo "Usage: $0 [-l] [<root of code name>]"
   exit
 fi
+SMDEV=$(pwd)/develop
 if [ $sw == local ] ; then
-  SMDEV=$(pwd)/develop
   PLUS=plus
 else
-## HS set to smiter top directory
+  PLUS=codlib
+fi
+## If no local develop directory, try to use smardda/develop directory
+if [ ! -d $SMDEV ] ; then
+    echo "Local directory \$SMDEV=$SMDEV does not exist - trying to use smardda/develop"
   if [[ -z "$HS" ]] ; then
     if [[ -n "$SMITER_DIR" ]] ; then HS=$SMITER_DIR; else HS=$HOME/smardda/smiter; fi
   fi
   SMDEV=${HS%/*}/develop
-  if [ ! -d $SMDEV ] ; then
-    echo "Directory \$SMDEV=$SMDEV does not exist - installation corrupt ?"
-    echo "Script quitting"; exit
-  fi
-  PLUS=
 fi
 PROG=${1%.f90}
 grep "^  *use" $PROG.f90 > filelist
@@ -53,5 +52,6 @@ wq
 echo " " >> sourcelist
 echo "PROG = $PROG" >> sourcelist
 rm -f Makefile.1
-cat $SMDEV/Makefile.hed sourcelist $SMDEV/Makefile.mid$PLUS uselist > Makefile.1
+cat $SMDEV/Makefile.hed$PLUS sourcelist $SMDEV/Makefile.mid$PLUS uselist > Makefile.1
+sed -i -e "s/ *!>.*/.mod/" -e "s/ mpi.mod//" Makefile.1
 rm -f uselist sourcelist

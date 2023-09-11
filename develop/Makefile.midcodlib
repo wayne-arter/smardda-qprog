@@ -4,14 +4,14 @@ MODULES=$(SOURCES:.f90=.mod)
 OBJECTS=$(SOURCES:.f90=.o)
 
 
-$(PROG): $(OBJECTS) $(LIBS)
-	$(F90) $(F90FLAGS) -o $(PROG) $(OBJECTS)  $(LIBS)
+$(PROG) : lib $(OBJECTS)
+	$(F90) $(F90FLAGS) -o $(PROG) $(OBJECTS) $(LIBF90) $(LIBS)
 
 $(OBJECTS):$(MODULES)
 	@touch .TOUCHFILE
 
 $(MODULES): %.mod : %.f90
-	$(F90) $(F90FLAGS) -c $<
+	$(F90) $(F90FLAGS) -I$(SMAPATH) -c $<
 
 clean:
 	rm -f $(OBJECTS) *$(MOD) $(EXTRA_CLEAN_FILES)
@@ -19,8 +19,12 @@ clean:
 distclean: clean
 	rm -f $(PROG) 
 
+lib :
+	cd $(SMAPATH)/LIB && $(MAKE) 
+	cd $(SMAPATH) && $(MAKE) -f Makefile.lib lib
+
 txt:
 	cat Makefile.$(PROG) $(SOURCES) > $(PROG).txt
 
-.PHONY : clean distclean
+.PHONY : clean distclean lib
 
