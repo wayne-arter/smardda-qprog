@@ -140,7 +140,7 @@ sed \
 sed \
 -e "s/bonumerics/"$Q"numerics/g" \
 -e "s/bigobj/$QPROG/g" \
--e "21a\  type("$BIGOBJ"_t) :: $BIGOBJ !< $BSTR" \
+-e "21a\     type("$BIGOBJ"_t) :: $BIGOBJ !< $BSTR" \
 -e"/^! $Note/d" \
 -e "9r include.txt" \
 -e "3a\  use "$BIGOBJ"_h" \
