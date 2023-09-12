@@ -2,8 +2,8 @@ Example Fortran 95, .doc and rubric files corresponding to CCFE-R(15)34
 https://scientific-publications.ukaea.uk/wp-content/uploads/CCFE-R-1534.pdf
 http://dx.doi.org/10.13140/RG.2.2.27018.41922
 
-The script qprog.bash will set up a conforming program and try to run it,
-it does not need SMARDDA installation if -l (for locally complete) is set as the first option.
+The script qprog.bash will set up a conforming program and try to run it, it does not
+need SMARDDA-LIB installation if the optional -l (for locally complete) appears as first argument.
 The program name, its abbreviation (typically one or two letters) and description are defined using
 the keys QPROG, Q and STR. The name of a skeleton module to be tested, its abbreviation
 and description are defined using the keys BIGOBJ, BO and BSTR, as indicated:
@@ -21,27 +21,17 @@ or Braginskii coeefficients will be the first, as object clcoef.
 5. Each new code should be developed in a physically distinct repo - do not develop
 more than one code in a 'qprog' repo, and do not try to push files back to the original repo.
 
-Files input
-qprog.txt contains the input variables that might be used by a range of different objects/modules
+Files input (note that the program-specific file will be used in preference to the generic one)
+qprog.txt/xpc.txt contains the input variables that might be used by a range of different objects/modules
  and the default values for these inputs. These variables form part of the top level control QPROG_t
  for the program. A human readable variable for use in
  a namelist will be generated using the first 3 words of the description of each variable.
  In the example, a=... to lambda=... will be copied to QPROG.txt (xpc.txt) and finish in QPROG_h.f90
-bigobj.txt contains the variables defining one object which will normally be defined using the
+bigobj.txt/clcoef.txt contains the variables defining one object which will normally be defined using the
  instructions resulting from the input variables in qprog.txt, using additional object level controls
  (and of course code to be written by the user).
  In the example, tau_e... and c_tau_e... will be copied to BIGOBJ.txt (clcoef.txt)
  and finish in BIGOBJ_h.f90.
-
-Scratch files output
-setvar.txt copy to internal variables from namelist variables
-namvarinit.txt set default values for namelist variables
-namvars.txt namelist variables as list, one per line
-namvardecl.txt declare type of namelist variables
-include.txt declare type of internal variables
-spaced.txt scratch formatted version of qprog.txt and bigobj.txt inputs
-copvar.txt copies (relevant) Qnumerics variables to BOnumerics
-copvar0.txt copies (relevant) Qnumerics variables to BOnumerics
 
 Files output and principal input functions as part of new QPROG (xpc) code
 QPROG.f90 main program, calls QPROG_readcon (xpc_readcon) in module QPROG_m.f90
@@ -49,7 +39,7 @@ QPROG_h.f90 parameters describing (at least) how to construct first object BIGOB
  Qnumerics_t (xpnumerics_t) which is to  be combined with other object data structures
  such as BIGOBJ_t into type QPROG_t
 QPROG_m.f90 input from QPROGparameters (xpcparameters) in QPROG_readcon, with namelist variables as
- constructed from qprog.txt, copied to  Qnumerics_t, *will generally need editing by hand*.
+ constructed from qprog.txt/xpc.txt, copied to  Qnumerics_t, *will generally need editing by hand*.
 QPROG_case0.ctl input file for QPROG containing complete list of namelists
 Qcontrol_h.f90 data structure of generic top level controls for QPROG abbreviated to Q
 Qcontrol_m.f90 object of generic top level controls for QPROG  abbreviated to Q, calls BIGOBJ_readcon
@@ -65,7 +55,7 @@ In one example, edits to QPROG_m.f90 are
 (3) QPROG_writeg to call gnuplot output control routine BIGOBJ_writeg,
 and edits to BIGOBJ_m.f90
 (1) add to BIGOBJ_solve to do new work, 
-(2) add to BIGOBJ_dia for new output to .log filet
+(2) add to BIGOBJ_dia for new output to .log file
 (3) add to BIGOBJ_writeg to output to .gnu file
 
 Outputs from execution of QPROG
@@ -83,7 +73,17 @@ doxygen doxyfile
 
 Other subdirectories
 doc produce latest version of CCFE-R(15)34 from f90 files, see local README
-TEST outputs to compare specialist example .ctl and .dat files setting a .dat file as input
+TEST outputs to compare, plus specialist example .ctl and .dat files setting a .dat file as input
+
+Scratch files output
+setvar.txt copy to internal variables from namelist variables
+namvarinit.txt set default values for namelist variables
+namvars.txt namelist variables as list, one per line
+namvardecl.txt declare type of namelist variables
+include.txt declare type of internal variables
+spaced.txt scratch formatted version of qprog.txt and bigobj.txt inputs
+copvar.txt copies (relevant) Qnumerics variables to BOnumerics
+copvar0.txt copies (relevant) Qnumerics variables to BOnumerics
 
 
 Updating auto-generated QPROG code
@@ -97,9 +97,10 @@ selfn%nrpams=number_of_real_parameters
 selfn%nipams=number_of_integer_parameters
 selfn%rpar=general_real_parameters(:number_of_real_parameters)
 selfn%npar=general_integer_parameters(:number_of_integer_parameters)
+and will come into play when setting the namelist variable xpc_formula='additional'
 
 This use is complicated by the fact that the same four "PAMS" variable names (short or long forms)
-necessarily appear in two places,
+together with the  bigobj_formula variable necessarily appear in two places,
 as there are two big objects produced by qprog.bash, namely xpc and clcoef. It helps anyway to explain
 the structure for controlling input which is generic:
 The split adopted in xpc.f90 is first, to initialise the control
@@ -126,4 +127,4 @@ Thereafter, xpcontrol_read calls
  (2) clcoef_readcon to read in type ccnumerics, checks the validity of the inputs and assign to xpc%clcoef%n
  A special feature of the relatively simple qprog represented by xpc is that all the variables in the
  sub-object of type ccnumerics are set by copying their counterparts in xpnumerics
- (effectively xpc%clcoef%n=xpc%n), EXCEPT for the PAMS variables.
+ (effectively xpc%clcoef%n=xpc%n), EXCEPT for the PAMS variables including bigobj_formula.
