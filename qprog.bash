@@ -70,7 +70,8 @@ sed \
 -e "s/ /_/g" < spaced.txt | sed -e "s/^__/  /" -e "s/_::_/ :: /" \
 | sed -e 's/_!<_/ !< /' | sed -e "s/_=_/ = /" > work.txt
 awk '{print "     " $1 " " $2 " " $3 " " $6 " " $7}' < work.txt > include.txt
-awk '{print "  " $1 " " $2 " " $7 " " $6 " self-explanatory local"}' < work.txt > namvardecl.txt
+awk '{print "  " $1 " " $2 " " $7 " " $6 " " $7}' < work.txt > namvardecl.txt
+vim namvardecl.txt -S namvardecl.ed
 awk '{print " & " $7 " , " "&" }' < work.txt > namvars.txt
 awk '{print "  " $7 " " $4 " " $5 }' < work.txt >namvarinit.txt
 awk '{print "  selfn%" $3 " " $4 " " $7 }' < work.txt > setvar.txt
